@@ -1,0 +1,22 @@
+---
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+import { Image } from 'astro:assets';
+import bgImage from "../images/background.jpg"
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Anirudha P Sah | Portfolio</title>
+	</head>
+	<body class=" bg-bgCol text-text">
+		<h1>Anirudha Pratap Sah</h1>
+		<Image src={bgImage} alt='Background Image' class='absolute inset-0 w-full h-full'/>
+	</body>
+</html>
