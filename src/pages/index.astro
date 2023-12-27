@@ -129,7 +129,7 @@ const projects = await getCollection("projects")
               >
                 {project.data.description}
               </p>
-              <a href="{project.data.url}" target="_blank"
+              <a href={project.data.url} target="_blank"
                 ><button
                   class="text-[clamp(.875rem,2.1875vw,2.625rem)] font-medium rounded-[100px] py-[clamp(.5rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-primary text-black"
                 >
