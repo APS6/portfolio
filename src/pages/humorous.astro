@@ -50,14 +50,14 @@ const projects = await getCollection("projects")
         <div class="flex gap-6 font-medium">
           <a href="/"
             ><button
-              class="text-[clamp(1rem,2.5vw,3rem)] rounded-[100px] py-[clamp(.6rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-primary text-black"
+              class="text-[clamp(1rem,2.5vw,3rem)] rounded-[100px] py-[clamp(.6rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-none border-2 border-primary"
             >
               Professional
             </button></a
           >
           <a href="/humorous"
             ><button
-              class="text-[clamp(1rem,2.5vw,3rem)] rounded-[100px] py-[clamp(.6rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-none border-2 border-primary"
+              class="text-[clamp(1rem,2.5vw,3rem)] rounded-[100px] py-[clamp(.6rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-primary text-black"
             >
               Humorous
             </button></a
@@ -71,8 +71,7 @@ const projects = await getCollection("projects")
           Who I am
         </h2>
         <p class="text-[clamp(2rem,4.6vw,5.5rem)]">
-          I'm a young fullstack web developer from India, who has been coding
-          for a year with a passion to build cool stuff from scratch.
+			One year in the code world, I've been staring at my computer and hitting the keyboard until a website materializes magically.
         </p>
       </section>
       <section class="py-12 md:py-24">
@@ -82,8 +81,7 @@ const projects = await getCollection("projects")
           What I do
         </h2>
         <p class="text-[clamp(2rem,4.6vw,5.5rem)]">
-          With commitment to top-notch quality, I transform ideas into reality
-          with pixel perfection and excellent UX.
+			I spend days working on my stupid ideas, trying to perfect every pixel and killing those nasty bugs
         </p>
       </section>
       <div id="marqueeParent" class="py-4 md:py-7 mt-8 border-y border-y-text">
@@ -127,7 +125,7 @@ const projects = await getCollection("projects")
               <p
                 class="text-[clamp(1.2rem,3.28125vw,4rem)] pb-[clamp(0.8rem,3.52vw,4.2rem)]"
               >
-                {project.data.description}
+                {project.data.hDescription}
               </p>
               <a href="{project.data.url}" target="_blank"
                 ><button
@@ -147,7 +145,7 @@ const projects = await getCollection("projects")
           Connect
         </h2>
         <p class="text-[clamp(1.25rem,4.375vw,3.5rem)] pb-5">
-          If you want to talk, you can hit me up on any of these
+          Hit me up on any of these and I will either ignore you or have a nice chat
         </p>
         <a class=" text-[clamp(.75rem,1.5625vw,1.5rem)] flex items-center gap-2 pb-5" href="mailto:anirudhapsah@gmail.com"><Mail /><span>anirudhapsah@gmail.com</span></a>
         <div class=" text-[clamp(.75rem,1.5625vw,1.5rem)] flex gap-5">

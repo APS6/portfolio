@@ -1,0 +1,22 @@
+---
+import { Image } from "astro:assets";
+import Logo from "../logo.jpeg"
+---
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-bgCol border-b border-text py-5 px-4 md:px-12 flex justify-between items-center ">
+  <a href="/" class="flex gap-3">
+    <Image
+      class="rounded-full"
+      src={Logo}
+      alt="logo"
+      width="30"
+      height="30"
+    />
+    <span class="text-xl font-semibold hidden sm:block">Anirudha P Sah</span>
+    <span class="text-xl font-semibold sm:hidden">APS</span>
+  </a>
+  <ul class="flex gap-4 sm:gap-7 text-lg">
+    <li id="pLink" class=" cursor-pointer">Portfolio</li>
+    <li><a href="https://github.com/APS6">Github</a></li>
+  </ul>
+</nav>

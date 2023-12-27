@@ -1,0 +1,7 @@
+{
+  "name": "My Blog",
+  "description": "A blog connected to CMS for me that only I read.",
+  "hDescription": "A blog so that I can save things for myself",
+  "url": "https://anirudha-blog.vercel.app",
+  "slug": "blog"
+}

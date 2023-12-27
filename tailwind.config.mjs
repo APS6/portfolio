@@ -5,15 +5,17 @@ export default {
 		extend: {
 			colors: {
 				bgCol: "#05070A",
-				text: "#EBF0FS",
-				primary: "A0BCCF",
+				text: "#EBF0F5",
+				primary: "#A0BCCF",
 				accent: "B975A5",
 			},
 			fontFamily: {
 				sans: ['Poppins', "sans-serif"],
 			},
-		}
-
+			height: {
+				screen: "100svh"
+			}
+		},
 	},
 	plugins: [],
 }
