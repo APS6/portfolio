@@ -37,14 +37,7 @@ const projects = await getCollection("projects")
       <header
         class="h-screen flex items-center sm:items-end pt-16 sm:pt-0 sm:pb-32 md:pb-16 2xl:pb-24"
       >
-        <h1
-          class="text-[clamp(4.5rem,15.3125vw,18rem)] font-semibold leading-none"
-        >
-          <div class="overflow-y-hidden"><div class="h1-line">Anirudha </div></div>
-          <div class="hidden min-[450px]:block overflow-y-hidden"><div class="h1-line">Pratap Sah</div></div>
-          <div class="min-[450px]:hidden overflow-y-hidden"><div class="h1-line">Pratap </div></div>
-          <div class="min-[450px]:hidden overflow-y-hidden"><div class="h1-line">Sah</div></div>
-        </h1>
+        <h1 class="text-[clamp(4.5rem,15.3125vw,18rem)] font-semibold leading-none">Anirudha Pratap Sah</h1>
       </header>
       <section
         class="py-12 md:py-16 border-y border-y-text flex flex-col items-center gap-11 md:mt-20"
@@ -176,26 +169,17 @@ const projects = await getCollection("projects")
         gsap.to(window, { duration: 0.5, scrollTo: "#portfolio" });
       });
 
-      gsap.from(".h1-line", {
-        duration: 1,
-        yPercent: 100,
-        scale: .8,
-        stagger: 0.2
-      })
-
       document.querySelectorAll(".para-animate").forEach((para) => {
         const htmlPara = para as HTMLElement;
-        const text = new SplitType(htmlPara, { types: 'chars'})
+        const text = new SplitType(htmlPara, { types: ["chars", "words"]})
 
         gsap.fromTo(text.chars, {
-          y: 20,
-          scale: 0.7,
-          opacity: 0,
+          x: 20,
+          opacity: .01,
         }, {
           duration: 0.5,
           opacity: 1,
-          y: 0,
-          scale: 1,
+          x: 0,
           stagger: 0.02,
           scrollTrigger: {
             trigger: para,
