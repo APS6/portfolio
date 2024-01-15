@@ -1,7 +1,7 @@
 {
-  "name": "Compu Pencil",
-  "description": "A website to showcase a magical pen.",
-  "hDescription": "Site for a real life compu pencil from doraemon. (Don’t ask me why)",
-  "url": "https://aps6.github.io/Compu-Pencil/",
-  "slug": "compu-pencil"
+  "name": "My Blog",
+  "description": "A blog connected to CMS for me that only I read.",
+  "hDescription": "A blog so that I can save things for myself",
+  "url": "https://anirudha-blog.vercel.app",
+  "slug": "blog"
 }
