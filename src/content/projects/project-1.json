@@ -1,7 +1,6 @@
 {
   "name": "Titter Chat",
   "description": "A Realtome Chat Application with all modern features",
-  "hDescription": "A chat app where I can say anything without getting banned. (not you)",
   "url": "https://titterchat.vercel.app",
   "slug": "titter"
 }

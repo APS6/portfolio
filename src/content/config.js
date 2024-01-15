@@ -7,7 +7,6 @@ const portfolioCollection = defineCollection({
     schema: z.object({
         name: z.string(),
         description: z.string(),
-        hDescription: z.string(),
         url: z.string(),
         slug: z.string()
     }),
