@@ -1,6 +1,6 @@
 {
-  "name": "My Blog",
-  "description": "A blog connected to CMS for me that only I read.",
-  "url": "https://anirudha-blog.vercel.app",
-  "slug": "blog"
+  "name": "Savory Slice",
+  "description": "E-commerce site and  landing page for a Pizzeria",
+  "url": "https://savory-slice.vercel.app",
+  "slug": "savory-slice"
 }
