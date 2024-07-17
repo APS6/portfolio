@@ -34,6 +34,7 @@ const projects = await getCollection("projects");
             </div>
             <Image
                 id="lightface"
+                loading="eager"
                 class="w-[300px] h-[300px] md:w-[350px] md:h-[350px]"
                 src={FaceLight}
                 alt="Anirudha Sah face"
@@ -42,6 +43,7 @@ const projects = await getCollection("projects");
             />
             <Image
                 id="darkface"
+                loading="eager"
                 class="hidden w-[300px] h-[300px] md:w-[350px] md:h-[350px]"
                 src={FaceDark}
                 alt="Anirudha Sah face"
