@@ -1,0 +1,64 @@
+---
+import RootLayout from "../layouts/RootLayout.astro";
+import "@fontsource/ibm-plex-mono";
+import { Image } from "astro:assets";
+import bg from "../images/cli-bg.webp";
+import { getCollection } from "astro:content";
+
+const projects = await getCollection("projects");
+---
+
+<RootLayout>
+  <main class="bg-[#171821] text-white font-mono h-screen w-full dark">
+    <Image
+      class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[90%] max-w-[400px] md:max-w-none sm:w-auto"
+      loading="eager"
+      src={bg}
+      alt="logo"
+    />
+    <div class="absolute inset-0 w-full h-full bg-[#171821] opacity-75"></div>
+    <section class="fixed inset-3 top-2 flex flex-col items-end">
+      <a class="underline underline-offset-2 text-[#7AA2F7]" href="/">GUI</a>
+      <div
+        class="w-full h-full relative mt-1 border border-[#9ECE6A] flex flex-col"
+      >
+        <span class="absolute -top-3 left-2 bg-[#171821] text-[#9ECE6A] px-2"
+          >Anirudha Pratap Sah:~</span
+        >
+        <div id="scrollParent" style="scrollbar-width: none;" class="mt-4 pl-2 h-full flex flex-col overflow-auto ">
+          <div id="outputdiv">
+            <div>
+              <span class="text-[#7AA2F7]">guest@portfolio:~</span>
+              <p class="inline">
+                welcome <br /> Welcome to my CLI portfolio. What would you like to
+                do? <br />
+                ------------------------------------------------------- <br />
+                Here are the commands you can use:<br />
+                <span class="font-bold text-[#AD8EE6]">help</span> - Shows the list
+                of commands <br />
+                <span class="font-bold text-[#AD8EE6]">projects</span> - Shows some
+                of my work.<br />
+                <span class="font-bold text-[#AD8EE6]">about</span> - A little bit
+                about me.<br />
+                <span class="font-bold text-[#AD8EE6]">connect</span> - Details for
+                you to connect with me.<br />
+                <span class="font-bold text-[#AD8EE6]">gui</span> - Switch to GUI.<br />
+                <span class="font-bold text-[#AD8EE6]">clear</span> - Clears the terminal.
+              </p>
+            </div>
+          </div>
+          <div class="relative h-full flex flex-col">
+            <span class="text-[#7AA2F7] absolute">guest@portfolio:~</span>
+            <textarea
+              style="scrollbar-width: none;"
+              class="bg-transparent h-full mb-1 indent-[10.7rem] w-full focus:outline-0 resize-none"
+              name="command"
+              id="command"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div data-projects={projects}></div>
+  <script src="../javascript/cli.js"></script>
+</RootLayout>

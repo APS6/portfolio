@@ -1,7 +1,6 @@
 ---
+import RootLayout from "../layouts/RootLayout.astro";
 import Navigation from "../components/Navigation.astro";
-import Sparkling from "../components/icons/sparkling.astro";
-import Mail from "../components/icons/mail.astro";
 import Github from "../components/icons/Github.astro";
 import Twitter from "../components/icons/Twitter.astro";
 import Discord from "../components/icons/Discord.astro";
@@ -9,174 +8,99 @@ import "@fontsource/poppins/400.css";
 import "@fontsource/poppins/500.css";
 import "@fontsource/poppins/600.css";
 import "@fontsource/poppins/700.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 import { Image } from "astro:assets";
+import FaceLight from "../images/face-light.webp";
+import FaceDark from "../images/face-dark.webp";
 import { getCollection } from "astro:content";
 
 const projects = await getCollection("projects");
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content="{Astro.generator}" />
-    <meta
-      name="description"
-      content="I am Anirudha Pratap Sah (APS) a fullstack web developer from India."
-    />
-    <meta
-      name="keywords"
-      content="Anirudha, APS, Anirudha Pratap Sah, Anirudha Sah, Anirudh Pratap Sah, Anirudh Sah, aps6"
-    />
-    <meta property="og:title" content="Anirudha P Sah | Web Developer" />
-    <meta
-      property="og:description"
-      content="I am Anirudha Pratap Sah (APS) a web developer from India. This is my portfolio"
-    />
-    <meta property="og:image" content="https://anirudha.pro/openGraph.jpg" />
-    <meta property="og:url" content="https://anirudha.pro/" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Anirudha P Sah | Web Developer" />
-    <meta
-      property="twitter:description"
-      content="I am APS a web developer from India. This is my portfolio"
-    />
-    <meta
-      property="twitter:image"
-      content="https://anirudha.pro/openGraph.jpg"
-    />
-    <title>Anirudha P Sah | Portfolio</title>
-  </head>
-  <body class="bg-bgCol text-text">
+<RootLayout>
     <Navigation />
-    <main
-      class="px-4 md:px-8 2xl:px-10 max-w-[120rem] m-auto overflow-x-hidden"
-    >
-      <header
-        class="h-screen flex items-center sm:items-end pt-16 sm:pt-0 sm:pb-32 md:pb-16 2xl:pb-24"
-      >
-        <h1
-          class="text-[clamp(4.5rem,15.3125vw,18rem)] font-semibold leading-none"
+    <main class="pt-24 px-2 xl:px-0 max-w-7xl m-auto">
+        <header
+            class="flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center min-[830px]:pl-14 pb-6 border-b-4 border-b-black dark:border-b-2 dark:border-b-neutral-100"
         >
-          Anirudha Pratap Sah
-        </h1>
-      </header>
-      <section class="py-12 md:py-24">
-        <h2
-          class="text-[clamp(0.875rem,1.875vw,2.25rem)] font-bold text-primary"
-        >
-          Who I am
-        </h2>
-        <p class="text-[clamp(2rem,4.6vw,5.5rem)] para-animate">
-          I'm a young fullstack web developer from India, who has been coding
-          for a year with a passion to build cool stuff from scratch.
-        </p>
-      </section>
-      <section class="py-12 md:py-24">
-        <h2
-          class="text-[clamp(0.875rem,1.875vw,2.25rem)] font-bold text-primary"
-        >
-          What I do
-        </h2>
-        <p class="text-[clamp(2rem,4.6vw,5.5rem)] para-animate">
-          With commitment to top-notch quality, I transform ideas into reality
-          with pixel perfection and excellent UX.
-        </p>
-      </section>
-      <div id="marqueeParent" class="py-4 md:py-7 mt-8 border-y border-y-text">
-        <div
-          id="marquee"
-          class="flex gap-2 md:gap-7 text-[clamp(1.2rem,3.28125vw,3.9375rem)] font-semibold text-[#c5c5c5] translate-x-1/4"
-        >
-          <span>Rails</span>
-          <span>Hotwire</span>
-          <span>Figma</span>
-          <span>React</span>
-          <span>NextJS</span>
-          <span>Database</span>
-          <span>Astro</span>
-          <span>CMS</span>
-          <span>GSAP</span>
-          <span>Prisma</span>
-          <span>UX</span>
-        </div>
-      </div>
-      <section id="portfolio" class="py-12 md:py-24">
-        <h2
-          class="text-[clamp(0.875rem,1.875vw,2.25rem)] pb-4 font-bold text-primary"
-        >
-          My work
-        </h2>
-        <div class="flex flex-col gap-14">
-          {
-            projects.map((project) => {
-              return (
-                <div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
-                  <Image
-                    class="rounded max-sm:w-full sm:flex-[0.9]"
-                    src={"/" + project.data.slug + ".webp"}
-                    alt={project.data.slug}
-                    width={500}
-                    height={500}
-                    widths={[300, 400, 500, 600, 700]}
-                    sizes={`(max-width:
-            450px) 400px, (min-width: 450px) 500px, (min-width: 640px) 300px,
-            (min-width: 768px) 500px, (min-width: 1400px) 700`}
-                  />
-                  <div class="flex-[1.2]">
-                    <h3 class="pb-3 text-[clamp(1.75rem,3.125vw,3.75rem)] sm:pb-[clamp(1.3rem,5.625vw,6.75rem)] font-medium">
-                      {project.data.name}
-                    </h3>
-                    <p class="text-[clamp(1.2rem,3.28125vw,4rem)] pb-[clamp(0.8rem,3.52vw,4.2rem)]">
-                      {project.data.description}
-                    </p>
-                    <a href={project.data.url} target="_blank">
-                      <button class="text-[clamp(.875rem,2.1875vw,2.625rem)] font-medium rounded-[100px] py-[clamp(.5rem,1.5vw,1.875rem)] px-[clamp(1rem,2.5vw,3rem)] bg-primary text-black">
-                        Explore
-                      </button>
-                    </a>
-                  </div>
-                </div>
-              );
-            })
-          }
-        </div>
-      </section>
-      <footer class="py-6 md:py-12 border-t border-t-text">
-        <h2
-          class="text-[clamp(0.875rem,1.875vw,2.25rem)] font-bold text-primary"
-        >
-          Connect
-        </h2>
-        <p class="text-[clamp(1.25rem,4.375vw,3.5rem)] pb-5">
-          If you want to talk, you can hit me up on <a
-            class="underline"
-            href="https://chat.anirudha.pro">Chat.Anirudha</a
-          > or any of these
-        </p>
-        <a
-          class="text-[clamp(.75rem,1.5625vw,1.5rem)] flex items-center gap-2 pb-5"
-          href="mailto:anirudhapsah@gmail.com"
-          ><Mail /><span>anirudhapsah@gmail.com</span></a
-        >
-        <div class="text-[clamp(.75rem,1.5625vw,1.5rem)] flex gap-5">
-          <a class="flex items-center gap-2" href="https://github.com/APS6"
-            ><Github /><span>Github</span></a
-          >
-          <a
-            class="flex items-center gap-2"
-            href="https://twitter.com/anirudhasah"
-            ><Twitter /> <span>Twitter</span></a
-          >
-          <a
-            class="flex items-center gap-2"
-            href="https://discord.com/users/752376627937411103"
-            ><Discord /><span>Discord</span></a
-          >
-        </div>
-      </footer>
+            <div>
+                <span class="font-poppins">Fullstack Developer</span>
+                <h1 class="text-7xl md:text-8xl font-poppins font-bold">
+                    Hi, I am<br />Anirudha
+                </h1>
+            </div>
+            <Image
+                id="lightface"
+                class="w-[300px] h-[300px] md:w-[350px] md:h-[350px]"
+                src={FaceLight}
+                alt="Anirudha Sah face"
+                width="350"
+                height="350"
+            />
+            <Image
+                id="darkface"
+                class="hidden w-[300px] h-[300px] md:w-[350px] md:h-[350px]"
+                src={FaceDark}
+                alt="Anirudha Sah face"
+                width="350"
+                height="350"
+            />
+        </header>
+        <section class="pt-4 pb-6 border-b-4 border-b-black dark:border-b-2 dark:border-b-neutral-100">
+            <h2 class="pl-1 text-lg font-bold">My Work</h2>
+            <p class="pl-1 text-lg">
+                I make websites that give users a pleasing experience
+            </p>
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8 pt-5">
+                {
+                    projects.map((project) => {
+                        return (
+                            <a href={project.data.url} target="_blank" class="bg-[#e9e9e9] dark:bg-neutral-900 dark:text-white rounded-xl pb-2">
+                                <Image
+                                    class="w-full rounded-t-lg"
+                                    src={"/" + project.data.slug + ".webp"}
+                                    alt={project.data.slug}
+                                    width={300}
+                                    height={300}
+                                />
+                                <div class="pt-1 px-3">
+                                    <h3 class="font-bold text-lg">
+                                        {project.data.name}
+                                    </h3>
+                                    <p class="">{project.data.description}</p>
+                                </div>
+                            </a>
+                        );
+                    })
+                }
+            </div>
+        </section>
+        <footer class="pl-1 pt-4 pb-6">
+            <h2 class="text-lg font-bold">Connect</h2>
+            <a class="text-lg underline underline-offset-2" href="https://chat.anirudha.pro"
+                >chat.anirudha</a
+            >
+            <a class="block text-lg" href="mailto:sahanirudha@proton.me"
+                >sahanirudha@proton.me</a
+            >
+            <div class="flex gap-4 pt-2">
+                <a href="https://github.com/APS6" class="flex gap-2 items-center text-lg">
+                    <Github />
+                    <span>Github</span>
+                </a>
+                <a href="https://twitter.com/anirudhasah" class="flex gap-2 items-center text-lg">
+                    <Twitter />
+                    <span>Twitter</span>
+                </a>
+                <a href="https://discord.com/users/752376627937411103" class="flex gap-2 items-center text-lg">
+                    <Discord />
+                    <span>Discord</span>
+                </a>
+            </div>
+        </footer>
     </main>
-    <script src="../animations.js"></script>
-  </body>
-</html>
+</RootLayout>
+<script src="../javascript/theme.js"></script>
