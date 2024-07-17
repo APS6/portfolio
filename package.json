@@ -16,8 +16,6 @@
     "@fontsource/inter": "^5.0.19",
     "@fontsource/poppins": "^5.0.8",
     "astro": "^4.11.5",
-    "gsap": "^3.12.4",
-    "split-type": "^0.3.4",
     "tailwindcss": "^3.4.0"
   }
 }
