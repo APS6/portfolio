@@ -12,7 +12,7 @@ const projects = await getCollection("projects");
 
 const outputContent = {
   help: (userInput) => `
- 		<span class="text-[#7AA2F7]">guest@portfolio:~</span>
+    <span class="text-[#7AA2F7]">guest@portfolio:~</span>
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">help</span>
@@ -27,30 +27,30 @@ const outputContent = {
        you to connect with me. <br />
        <span class="font-bold text-[#AD8EE6]">gui</span> - Switch to GUI.<br />
        <span class="font-bold text-[#AD8EE6]">clear</span> - Clears the terminal.
-   	</p>
+    </p>
 `,
   projects: (userInput) => {
     return `
-    		<span class="text-[#7AA2F7]">guest@portfolio:~</span>
+        <span class="text-[#7AA2F7]">guest@portfolio:~</span>
         <p class="inline">
           ${userInput} <br />
           <span class="bg-[#449DAB] px-1 py-[2px]">Projects</span> <br>
          ${projects.map((project) => `<span><span class="text-[#449dab] font-bold">${project.data.name}</span> - ${project.data.description}</span>`).join("<br />")}
-       	</p>
-    	`;
+        </p>
+      `;
   },
   about: (userInput) => `
- 		<span class="text-[#7AA2F7]">guest@portfolio:~</span>
+    <span class="text-[#7AA2F7]">guest@portfolio:~</span>
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">About</span><br>
       Hey! I'm Anirudha Pratap Sah, A selftaught fullstack web developer from India who loves to build things.<br>
       I've been programming for over an year now and throughout the way learnt various things. <br> Some of my skills: HTML CSS & JS (obviously), React, Ruby on Rails, Elixir & Phoenix, Databases, UX. <br>
       I would not call myself a designer but I understand the principles and design my sites myself.
-   	</p>
+    </p>
 `,
   connect: (userInput) => `
- 		<span class="text-[#7AA2F7]">guest@portfolio:~</span>
+    <span class="text-[#7AA2F7]">guest@portfolio:~</span>
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">Connect</span><br>
@@ -71,18 +71,18 @@ const outputContent = {
                     Discord
                 </a>
             </div>
-   	</p>
+    </p>
 `,
   empty: () => `
     <span class="text-[#7AA2F7]">guest@portfolio:~</span>`,
   invalid: (userInput) => `
- 		<span class="text-[#7AA2F7]">guest@portfolio:~</span>
+    <span class="text-[#7AA2F7]">guest@portfolio:~</span>
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#f7768e] px-1 py-[2px]">ERROR</span>
-     	Invalid command <br>
-     	type 'help' to see the list of commands
-   	</p>
+      Invalid command <br>
+      type 'help' to see the list of commands
+    </p>
 `,
 };
 
@@ -105,7 +105,7 @@ input.addEventListener("keydown", (e) => {
     e.preventDefault();
     const command = input.value.trim();
     input.value = "";
-    switch (command) {
+    switch (command.toLowerCase()) {
       case "help":
         giveOutput("help", command);
         break;
