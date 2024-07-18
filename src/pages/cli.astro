@@ -25,14 +25,24 @@ const projects = await getCollection("projects");
         <span class="absolute -top-3 left-2 bg-[#171821] text-[#9ECE6A] px-2"
           >Anirudha Pratap Sah:~</span
         >
-        <div id="scrollParent" style="scrollbar-width: none;" class="mt-4 pl-2 h-full flex flex-col overflow-auto ">
+        <div
+          id="scrollParent"
+          style="scrollbar-width: none;"
+          class="mt-4 pl-2 h-full flex flex-col overflow-auto"
+        >
           <div id="outputdiv">
             <div>
               <span class="text-[#7AA2F7]">guest@portfolio:~</span>
               <p class="inline">
-                welcome <br /> Welcome to my CLI portfolio. What would you like to
-                do? <br />
-                ------------------------------------------------------- <br />
+                welcome <br />
+                <div>
+                  <span
+                    >Welcome to my CLI portfolio. What would you like to do?</span
+                  >
+                  <span class="w-full h-6 block"
+                    >-------------------------------------------------------</span
+                  >
+                </div>
                 Here are the commands you can use:<br />
                 <span class="font-bold text-[#AD8EE6]">help</span> - Shows the list
                 of commands <br />
@@ -42,8 +52,10 @@ const projects = await getCollection("projects");
                 about me.<br />
                 <span class="font-bold text-[#AD8EE6]">connect</span> - Details for
                 you to connect with me.<br />
-                <span class="font-bold text-[#AD8EE6]">gui</span> - Switch to GUI.<br />
-                <span class="font-bold text-[#AD8EE6]">clear</span> - Clears the terminal.
+                <span class="font-bold text-[#AD8EE6]">gui</span> - Switch to GUI.<br
+                />
+                <span class="font-bold text-[#AD8EE6]">clear</span> - Clears the
+                terminal.
               </p>
             </div>
           </div>
@@ -53,7 +65,9 @@ const projects = await getCollection("projects");
               style="scrollbar-width: none;"
               class="bg-transparent h-full mb-1 indent-[10.7rem] w-full focus:outline-0 resize-none"
               name="command"
-              id="command"></textarea>
+              id="command"
+              aria-label="command input"
+              ></textarea>
           </div>
         </div>
       </div>
