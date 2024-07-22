@@ -3,9 +3,6 @@ import RootLayout from "../layouts/RootLayout.astro";
 import "@fontsource/ibm-plex-mono";
 import { Image } from "astro:assets";
 import bg from "../images/cli-bg.webp";
-import { getCollection } from "astro:content";
-
-const projects = await getCollection("projects");
 ---
 
 <RootLayout>
@@ -20,7 +17,7 @@ const projects = await getCollection("projects");
     <section class="fixed inset-3 top-2 flex flex-col items-end">
       <a class="underline underline-offset-2 text-[#7AA2F7]" href="/">GUI</a>
       <div
-        class="w-full h-full relative mt-1 border border-[#9ECE6A] flex flex-col"
+        class="w-full h-full relative mt-1 overflow-hidden border border-[#9ECE6A] flex flex-col"
       >
         <span class="absolute -top-3 left-2 bg-[#171821] text-[#9ECE6A] px-2"
           >Anirudha Pratap Sah:~</span
@@ -63,6 +60,7 @@ const projects = await getCollection("projects");
             <span class="text-[#7AA2F7] absolute">guest@portfolio:~</span>
             <textarea
               autofocus
+              rows="1"
               style="scrollbar-width: none;"
               class="bg-transparent h-full mb-1 indent-[10.7rem] w-full focus:outline-0 resize-none"
               name="command"
@@ -74,6 +72,5 @@ const projects = await getCollection("projects");
       </div>
     </section>
   </main>
-  <div data-projects={projects}></div>
   <script src="../javascript/cli.js"></script>
 </RootLayout>

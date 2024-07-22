@@ -100,11 +100,18 @@ const clearTerminal = () => {
   });
 };
 
+const resizeTextarea = () => {
+  input.style.height = "auto";
+  input.style.height = `${input.scrollHeight + 24}px`;
+};
+
 input.addEventListener("keydown", (e) => {
+  resizeTextarea();
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     const command = input.value.trim();
     input.value = "";
+    input.style.height = "auto";
     switch (command.toLowerCase()) {
       case "help":
         giveOutput("help", command);
