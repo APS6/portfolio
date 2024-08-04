@@ -35,7 +35,7 @@ const outputContent = {
         <p class="inline">
           ${userInput} <br />
           <span class="bg-[#449DAB] px-1 py-[2px]">Projects</span> <br>
-         ${projects.map((project) => `<span><span class="text-[#449dab] font-bold">${project.data.name}</span> - ${project.data.description}</span>`).join("<br />")}
+         ${projects.map((project) => `<span><a href="${project.data.url}" target="_blank"  class="text-[#449dab] underline underline-offset-4 font-bold">${project.data.name}</a> - ${project.data.description}</span>`).join("<br />")}
         </p>
       `;
   },
