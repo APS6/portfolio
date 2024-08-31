@@ -1,7 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import Logo from "../images/logo.webp";
-
 ---
 
 <html class="" lang="en">
@@ -67,29 +66,33 @@ You searched for 'Anirudh Pratap Sah' which is not the right spelling. Click to 
         />
     </head>
     <body class="bg-black text-white font-inter">
-    <div class="fixed top-0 left-0 right-0 z-50 pt-2 px-2 xl:px-0">
-  <div class="w-full max-w-7xl m-auto flex gap-2">
-    <nav
-      class="bg-black text-white dark:bg-[#1F1F1F] flex flex-1 px-5 py-2 rounded-full justify-between items-center"
-    >
-      <a href="/" class="flex items-center gap-3">
-        <Image
-          class="rounded-full w-10 h-10"
-          loading="eager"
-          src={Logo}
-          alt="Anirudha Sah Logo"
-          width="100"
-          height="100"
-        />
-        <span class="text-2xl md:text-3xl font-semibold">APS</span>
-      </a>
-      <ul class="flex gap-4 sm:gap-7 text-lg">
-        <li><a href="https://github.com/APS6">Github</a></li>
-        <li class="hidden sm:block"><a href="https://chat.anirudha.pro">Chat</a></li>
-      </ul>
-    </nav>
-  </div>
-</div>
+        <div class="fixed top-0 left-0 right-0 z-50 pt-2 px-2 xl:px-0">
+            <div class="w-full max-w-7xl m-auto flex gap-2">
+                <nav
+                    class="bg-black text-white dark:bg-[#1F1F1F] flex flex-1 px-5 py-2 rounded-full justify-between items-center"
+                >
+                    <a href="/" class="flex items-center gap-3">
+                        <Image
+                            class="rounded-full w-10 h-10"
+                            loading="eager"
+                            src={Logo}
+                            alt="Anirudha Sah Logo"
+                            width="100"
+                            height="100"
+                        />
+                        <span class="text-2xl md:text-3xl font-semibold"
+                            >APS</span
+                        >
+                    </a>
+                    <ul class="flex gap-4 sm:gap-7 text-lg">
+                        <li><a href="https://github.com/APS6">Github</a></li>
+                        <li class="hidden sm:block">
+                            <a href="https://chat.anirudha.pro">Chat</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
         <main class="h-screen w-full grid place-items-center">
             <div class="text-center max-w-3xl px-4">
                 <h1 class="text-3xl sm:text-5xl">
@@ -100,22 +103,37 @@ You searched for 'Anirudh Pratap Sah' which is not the right spelling. Click to 
                     but the correct spelling is 'Anirudha'. Click the button
                     below to go the right site.
                 </p>
-                <button
-                    class="bg-[#72A6BC] text-black text-xl mt-4 py-3 px-6 rounded-2xl"
-                    ><a href="/">Go to main site</a></button
+                <a href="/">
+                    <button
+                        class="bg-[#72A6BC] text-black text-xl mt-4 py-3 px-6 rounded-2xl"
+                        >Go to main site</button
+                    ></a
                 >
-                <span class="block mt-2 text-sm">*You will be redirected automatically in 10 seconds*</span>
+                <span class="block mt-2 text-sm"
+                    >*You will be redirected automatically in 10 seconds*</span
+                >
             </div>
-
         </main>
-         <div class="px-2 max-w-6xl mx-auto"><h2 class="text-xl font-bold">More Info</h2><p>I am Anirudha Pratap Sah a webdeveloper. My name is commonly misspelled as Anirudh which leads to people not being able to find me. This page allows people to correct that mistake and get to my actual website.</p></div>
-         <div class="px-2 mt-4 max-w-6xl mx-auto"><h2 class="text-xl font-bold">Who am I</h2><p>I'm a selftaught fullstack web developer from India who loves to build things.
-Some of my skills are HTML CSS & JS (obviously), React, Ruby on Rails, Elixir & Phoenix, Databases, UX.</p></div>
+        <div class="px-2 max-w-6xl mx-auto">
+            <h2 class="text-xl font-bold">More Info</h2><p>
+                I am Anirudha Pratap Sah a webdeveloper. My name is commonly
+                misspelled as Anirudh which leads to people not being able to
+                find me. This page allows people to correct that mistake and get
+                to my actual website.
+            </p>
+        </div>
+        <div class="px-2 mt-4 max-w-6xl mx-auto">
+            <h2 class="text-xl font-bold">Who am I</h2><p>
+                I'm a selftaught fullstack web developer from India who loves to
+                build things. Some of my skills are HTML CSS & JS (obviously),
+                React, Ruby on Rails, Elixir & Phoenix, Databases, UX.
+            </p>
+        </div>
 
-<script>
-     setTimeout(function(){
-            window.location.href = "https://anirudha.pro";
-        }, 10000)
-</script>
+        <script>
+            setTimeout(function () {
+                window.location.href = "https://anirudha.pro";
+            }, 10000);
+        </script>
     </body>
 </html>
