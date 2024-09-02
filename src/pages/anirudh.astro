@@ -1,6 +1,10 @@
 ---
 import { Image } from "astro:assets";
 import Logo from "../images/logo.webp";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 ---
 
 <html class="" lang="en">
@@ -95,7 +99,7 @@ You searched for 'Anirudh Pratap Sah' which is not the right spelling. Click to 
         </div>
         <main class="h-screen w-full grid place-items-center">
             <div class="text-center max-w-3xl px-4">
-                <h1 class="text-3xl sm:text-5xl">
+                <h1 class="text-3xl sm:text-5xl font-medium">
                     Hey, it's Anirudha Pratap Sah
                 </h1>
                 <p class="md:text-lg mt-3">
@@ -108,9 +112,6 @@ You searched for 'Anirudh Pratap Sah' which is not the right spelling. Click to 
                         class="bg-[#72A6BC] text-black text-xl mt-4 py-3 px-6 rounded-2xl"
                         >Go to main site</button
                     ></a
-                >
-                <span class="block mt-2 text-sm"
-                    >*You will be redirected automatically in 10 seconds*</span
                 >
             </div>
         </main>
@@ -129,11 +130,5 @@ You searched for 'Anirudh Pratap Sah' which is not the right spelling. Click to 
                 React, Ruby on Rails, Elixir & Phoenix, Databases, UX.
             </p>
         </div>
-
-        <script>
-            setTimeout(function () {
-                window.location.href = "https://anirudha.pro";
-            }, 10000);
-        </script>
     </body>
 </html>
