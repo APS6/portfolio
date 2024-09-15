@@ -1,6 +1,6 @@
 {
-  "name": "Chat.Anirudha",
-  "description": "A custom website where anyone can message me. Made w/ Rails",
-  "url": "https://chat.anirudha.pro",
-  "slug": "chat"
+  "name": "How Did I Login",
+  "description": "Brower extension that rememebrs and marks login methods on websites. Available on Chrome and Firefox",
+  "url": "https://howlogin.anirudha.pro",
+  "slug": "howdidilogin"
 }
