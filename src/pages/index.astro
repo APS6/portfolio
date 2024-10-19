@@ -51,16 +51,22 @@ const projects = await getCollection("projects");
                 height="350"
             />
         </header>
-        <section class="pt-4 pb-6 border-b-4 border-b-black dark:border-b-2 dark:border-b-neutral-100">
+        <section
+            class="pt-4 pb-6 border-b-4 border-b-black dark:border-b-2 dark:border-b-neutral-100"
+        >
             <h2 class="pl-1 text-lg font-bold">My Work</h2>
             <p class="pl-1 text-lg">
-                I make websites that give users a pleasing experience
+                Here are are some of the things that I have built.
             </p>
             <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8 pt-5">
                 {
                     projects.map((project) => {
                         return (
-                            <a href={project.data.url} target="_blank" class="bg-[#e9e9e9] dark:bg-neutral-900 dark:text-white rounded-xl pb-2">
+                            <a
+                                href={project.data.url}
+                                target="_blank"
+                                class="bg-[#e9e9e9] dark:bg-neutral-900 dark:text-white rounded-xl pb-2"
+                            >
                                 <Image
                                     class="w-full rounded-t-lg"
                                     loading="eager"
@@ -83,22 +89,32 @@ const projects = await getCollection("projects");
         </section>
         <footer class="pl-1 pt-4 pb-6">
             <h2 class="text-lg font-bold">Connect</h2>
-            <a class="text-lg underline underline-offset-2" href="https://chat.anirudha.pro"
-                >chat.anirudha</a
+            <a
+                class="text-lg underline underline-offset-2"
+                href="https://chat.anirudha.pro">chat.anirudha</a
             >
             <a class="block text-lg" href="mailto:sahanirudha@proton.me"
                 >sahanirudha@proton.me</a
             >
             <div class="flex gap-4 pt-2">
-                <a href="https://github.com/APS6" class="flex gap-2 items-center text-lg">
+                <a
+                    href="https://github.com/APS6"
+                    class="flex gap-2 items-center text-lg"
+                >
                     <Github />
                     <span>Github</span>
                 </a>
-                <a href="https://twitter.com/anirudhasah" class="flex gap-2 items-center text-lg">
+                <a
+                    href="https://twitter.com/anirudhasah"
+                    class="flex gap-2 items-center text-lg"
+                >
                     <Twitter />
                     <span>Twitter</span>
                 </a>
-                <a href="https://discord.com/users/752376627937411103" class="flex gap-2 items-center text-lg">
+                <a
+                    href="https://discord.com/users/752376627937411103"
+                    class="flex gap-2 items-center text-lg"
+                >
                     <Discord />
                     <span>Discord</span>
                 </a>
