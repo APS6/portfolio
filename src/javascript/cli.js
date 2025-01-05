@@ -54,7 +54,7 @@ const outputContent = {
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">Connect</span><br>
-            <a class="underline underline-offset-4" href="https://chat.anirudha.pro"
+            <a class="underline underline-offset-4" href="https://chat.anirudhasah.com"
                 >chat.anirudha</a
             >
             <a class="underline underline-offset-4" href="mailto:sahanirudha@proton.me"
@@ -132,7 +132,7 @@ input.addEventListener("keydown", (e) => {
         giveOutput("empty");
         break;
       case "gui":
-        window.location.href = "https://www.anirudha.pro";
+        window.location.href = "https://www.anirudhasah.com";
         break;
       default:
         giveOutput("invalid", command);
