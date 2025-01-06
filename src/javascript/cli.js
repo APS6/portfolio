@@ -57,8 +57,8 @@ const outputContent = {
             <a class="underline underline-offset-4" href="https://chat.anirudhasah.com"
                 >chat.anirudha</a
             >
-            <a class="underline underline-offset-4" href="mailto:sahanirudha@proton.me"
-                >sahanirudha@proton.me</a
+            <a class="underline underline-offset-4" href="mailto:me@anirudhasah.com"
+                >me@anirudhasah.com</a
             >
             <div class="flex gap-4 pt-2">
                 <a href="https://github.com/APS6" class="underline underline-offset-4">
