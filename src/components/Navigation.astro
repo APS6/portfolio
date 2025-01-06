@@ -7,37 +7,39 @@ import Terminal from "../components/icons/terminal.astro";
 ---
 
 <div class="fixed top-0 left-0 right-0 z-50 pt-2 px-2 xl:px-0">
-  <div class="w-full max-w-7xl m-auto flex gap-2">
-    <nav
-      class="bg-black text-white dark:bg-[#1F1F1F] flex flex-1 px-5 py-2 rounded-full justify-between items-center"
-    >
-      <a href="/" class="flex items-center gap-3">
-        <Image
-          class="rounded-full w-10 h-10"
-          loading="eager"
-          src={Logo}
-          alt="Anirudha Sah Logo"
-          width="100"
-          height="100"
-        />
-        <span class="text-2xl md:text-3xl font-semibold">APS</span>
-      </a>
-      <ul class="flex gap-4 sm:gap-7 text-lg">
-        <li><a href="https://github.com/APS6">Github</a></li>
-        <li class="hidden sm:block"><a href="https://chat.anirudha.pro">Chat</a></li>
-      </ul>
-    </nav>
-    <div
-      class="bg-black text-white dark:bg-[#1F1F1F] h-[56px] grid place-items-center px-3 rounded-full cursor-pointer"
-      id="theme-toggle"
-    >
-      <Sun /><Moon />
+    <div class="w-full max-w-7xl m-auto flex gap-2">
+        <nav
+            class="bg-black text-white dark:bg-[#1F1F1F] flex flex-1 px-5 py-2 rounded-full justify-between items-center"
+        >
+            <a href="/" class="flex items-center gap-3">
+                <Image
+                    class="rounded-full w-10 h-10"
+                    loading="eager"
+                    src={Logo}
+                    alt="Anirudha Sah Logo"
+                    width="100"
+                    height="100"
+                />
+                <span class="text-2xl md:text-3xl font-semibold">APS</span>
+            </a>
+            <ul class="flex gap-4 sm:gap-7 text-lg">
+                <li><a href="https://github.com/APS6">Github</a></li>
+                <li class="hidden sm:block">
+                    <a href="https://chat.anirudhasah.com">Chat</a>
+                </li>
+            </ul>
+        </nav>
+        <div
+            class="bg-black text-white dark:bg-[#1F1F1F] h-[56px] grid place-items-center px-3 rounded-full cursor-pointer"
+            id="theme-toggle"
+        >
+            <Sun /><Moon />
+        </div>
+        <a
+            href="/cli"
+            aria-label="switch to cli"
+            class="bg-black text-white dark:bg-[#1F1F1F] h-[56px] grid place-items-center px-3 rounded-full cursor-pointer"
+            ><Terminal /></a
+        >
     </div>
-    <a
-      href="/cli"
-      aria-label="switch to cli"
-      class="bg-black text-white dark:bg-[#1F1F1F] h-[56px] grid place-items-center px-3 rounded-full cursor-pointer"
-      ><Terminal /></a
-    >
-  </div>
 </div>
