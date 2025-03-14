@@ -44,9 +44,14 @@ const outputContent = {
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">About</span><br>
-      Hey! I'm Anirudha Pratap Sah, A selftaught fullstack web developer from India who loves to build things.<br>
-      I've been programming for over an year now and throughout the way learnt various things. <br> Some of my skills: HTML CSS & JS (obviously), React, Ruby on Rails, Elixir & Phoenix, Databases, UX. <br>
-      I would not call myself a designer but I understand the principles and design my sites myself.
+      Hey there! I’m Anirudha, a 15 year old programmer from India. <br
+      /> I started programming at the age of 13 with web development. Over
+      the years I have worked with multiple languages and frameworks. Some
+      of my favorites are Astro, Svelte, Ruby on Rails and Phoenix LiveView
+      (Elixir). Right now I am getting into app development with kotlin.
+      <br />
+      I have built a few things and I will continue building things and
+      learning what I have to because that is why I like to code.
     </p>
 `,
   connect: (userInput) => `
