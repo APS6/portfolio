@@ -48,7 +48,7 @@ const outputContent = {
       /> I started programming at the age of 13 with web development. Over
       the years I have worked with multiple languages and frameworks. Some
       of my favorites are Astro, Svelte, Ruby on Rails and Phoenix LiveView
-      (Elixir). Right now I am getting into app development with kotlin.
+      (Elixir).
       <br />
       I have built a few things and I will continue building things and
       learning what I have to because that is why I like to code.
