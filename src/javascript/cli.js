@@ -44,7 +44,7 @@ const outputContent = {
     <p class="inline">
       ${userInput} <br />
       <span class="bg-[#449DAB] px-1 py-[2px]">About</span><br>
-      Hey there! I’m Anirudha, a 15 year old programmer from India. <br
+      Hey there! I’m Anirudha, a 16 year old programmer from India. <br
       /> I started programming at the age of 13 with web development. Over
       the years I have worked with multiple languages and frameworks. Some
       of my favorites are Astro, Svelte, Ruby on Rails and Phoenix LiveView
