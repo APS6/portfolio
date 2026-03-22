@@ -1,11 +1,100 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import FaceDark from "../images/face-dark.webp";
+import Face from "../components/face.astro";
 ---
 
 <Layout>
-	<Welcome />
+    <nav
+        class="max-w-4xl bg-surface-variant w-full mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded"
+    >
+        <h3 class="text-2xl text-primary font-medium">APS</h3>
+        <ul class="flex gap-4">
+            <a
+                class="text-on-surface-variant underline"
+                href="https://github.com/APS6">github</a
+            >
+            <a class="text-on-surface-variant underline" href="#projects"
+                >projects</a
+            >
+            <a class="text-on-surface-variant underline" href="#stats">stats</a>
+        </ul>
+    </nav>
+    <main class="max-w-4xl px-4 mx-auto">
+        <header
+            class="py-12 flex flex-col md:flex-row gap-8 justify-between items-center"
+        >
+            <div class="flex flex-col gap-2">
+                <h1 class="text-6xl text-primary font-bold">Anirudha</h1>
+                <ul class="flex gap-4">
+                    <li class="flex items-center gap-2">
+                        <div class="h-1 w-1 rounded-full bg-[#89d36a]"></div>
+                        <span class="text-secondary">online</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <div class="h-1 w-1 rounded-full bg-error"></div>
+                        <span class="text-secondary">not coding</span>
+                    </li>
+                </ul>
+                <p>just a kid who codes (too much)</p>
+            </div>
+            <Face size="200" color="#E0DEF4" />
+        </header>
+
+        <div>
+            <h2 class="text-primary font-semibold text-xl">projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-4">
+                <div>
+                    <a
+                        class="text-xl text-secondary underline"
+                        href="https://study.anirudhasah.com"
+                        ><h3>studybuddy</h3></a
+                    >
+                    <p class="mt-1">
+                        An AI-powered platform to empower students with
+                        personalized tests and advice
+                    </p>
+                </div>
+                <div>
+                    <a
+                        class="text-xl text-secondary underline"
+                        href="https://login.anirudhasah.com"
+                        ><h3>how did i login</h3></a
+                    >
+                    <p class="mt-1">
+                        Browser extension that remembers and marks last used
+                        login methods and google account. Available on Chrome
+                        and Firefox
+                    </p>
+                </div>
+                <div>
+                    <a
+                        class="text-xl text-secondary underline"
+                        href="https://github.com/APS6/omazed"><h3>omazed</h3></a
+                    >
+                    <p class="mt-1">
+                        Dynamic theme switching and generation plugin for Zed in
+                        Omarchy
+                    </p>
+                </div>
+                <div>
+                    <a
+                        class="text-xl text-secondary underline"
+                        href="https://gicpatlot.in"><h3>gicpatlot.in</h3></a
+                    >
+                    <p class="mt-1">
+                        Website for a government school in India with a full
+                        CMS.
+                    </p>
+                </div>
+                <div>
+                    <a class="text-xl text-secondary underline" href="#"
+                        ><h3>project b6</h3></a
+                    >
+                    <p class="mt-1">Coming soon (trust me bro)</p>
+                </div>
+            </div>
+        </div>
+    </main>
 </Layout>
