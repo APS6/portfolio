@@ -1,27 +1,121 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
-import FaceDark from "../images/face-dark.webp";
 import Face from "../components/face.astro";
+import Stats from "../components/stats.svelte"
+
+import { db, current_status, stats_day, coding_by_language, gte } from "astro:db";
+
+const [status] = await db.select().from(current_status).limit(1);
+const now = Math.floor(Date.now() / 1000);
+
+const is_online = !!status && now - status.last_activity_at <= 300;
+const is_coding = !!status && now - status.last_coding_at <= 300;
+
+const month_ago = now - 30 * 24 * 60 * 60;
+const three_months_ago = now - 90 * 24 * 60 * 60;
+
+const daysPromise = db
+  .select({
+    timestamp: stats_day.timestamp,
+    keystrokes: stats_day.keystrokes,
+    keybinds: stats_day.keybinds,
+    mouse_clicks: stats_day.mouse_clicks,
+    mouse_distance_mm: stats_day.mouse_distance_mm,
+    mouse_scroll_mm: stats_day.mouse_scroll_mm,
+    chars_written: stats_day.chars_written,
+    git_commits: stats_day.git_commits,
+    git_lines_added: stats_day.git_lines_added,
+    git_lines_removed: stats_day.git_lines_removed,
+    active_minutes: stats_day.active_minutes,
+  })
+  .from(stats_day)
+  .where(gte(stats_day.timestamp, month_ago))
+  .orderBy((table) => table.timestamp);
+
+const codingByLanguagePromise = db
+  .select({
+    date: coding_by_language.date,
+    language: coding_by_language.language,
+    seconds: coding_by_language.seconds,
+    chars_written: coding_by_language.chars_written,
+  })
+  .from(coding_by_language)
+  .where(gte(coding_by_language.date, month_ago))
+  .orderBy((table) => table.date);
+
+const heatmapDaysPromise = db
+  .select({
+    timestamp: stats_day.timestamp,
+    git_commits: stats_day.git_commits,
+  })
+  .from(stats_day)
+  .where(gte(stats_day.timestamp, three_months_ago))
+  .orderBy((table) => table.timestamp);
+
+const heatmapCodingByLanguagePromise = db
+  .select({
+    date: coding_by_language.date,
+    seconds: coding_by_language.seconds,
+  })
+  .from(coding_by_language)
+  .where(gte(coding_by_language.date, three_months_ago))
+  .orderBy((table) => table.date);
+
+const [days, codingByLanguage, heatmapDays, heatmapCodingByLanguage] =
+  await Promise.all([
+    daysPromise,
+    codingByLanguagePromise,
+    heatmapDaysPromise,
+    heatmapCodingByLanguagePromise,
+  ]);
+
+const totals = days.reduce(
+  (acc, day) => ({
+    keystrokes: acc.keystrokes + (day.keystrokes ?? 0),
+    keybinds: acc.keybinds + (day.keybinds ?? 0),
+    mouse_clicks: acc.mouse_clicks + (day.mouse_clicks ?? 0),
+    mouse_distance_mm: acc.mouse_distance_mm + (day.mouse_distance_mm ?? 0),
+    mouse_scroll_mm: acc.mouse_scroll_mm + (day.mouse_scroll_mm ?? 0),
+    chars_written: acc.chars_written + (day.chars_written ?? 0),
+    git_commits: acc.git_commits + (day.git_commits ?? 0),
+    git_lines_added: acc.git_lines_added + (day.git_lines_added ?? 0),
+    git_lines_removed: acc.git_lines_removed + (day.git_lines_removed ?? 0),
+    active_minutes: acc.active_minutes + (day.active_minutes ?? 0),
+  }),
+  {
+    keystrokes: 0,
+    keybinds: 0,
+    mouse_clicks: 0,
+    mouse_distance_mm: 0,
+    mouse_scroll_mm: 0,
+    chars_written: 0,
+    git_commits: 0,
+    git_lines_added: 0,
+    git_lines_removed: 0,
+    active_minutes: 0,
+  }
+);
 ---
 
 <Layout>
-    <nav
-        class="max-w-4xl bg-surface-variant w-full mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded"
-    >
-        <h3 class="text-2xl text-primary font-medium">APS</h3>
-        <ul class="flex gap-4">
-            <a
-                class="text-on-surface-variant underline"
-                href="https://github.com/APS6">github</a
-            >
-            <a class="text-on-surface-variant underline" href="#projects"
-                >projects</a
-            >
-            <a class="text-on-surface-variant underline" href="#stats">stats</a>
-        </ul>
-    </nav>
-    <main class="max-w-4xl px-4 mx-auto">
+    <div class="px-2 md:px-0">
+        <nav
+            class="max-w-4xl bg-surface-variant w-full md:mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded"
+        >
+            <h3 class="text-2xl text-primary font-medium">APS</h3>
+            <ul class="flex gap-4">
+                <a
+                    class="text-on-surface-variant underline"
+                    href="https://github.com/APS6">github</a
+                >
+                <a class="text-on-surface-variant underline" href="#projects"
+                    >projects</a
+                >
+                <a class="text-on-surface-variant underline" href="#stats">stats</a>
+            </ul>
+        </nav>
+    </div>
+    <main class="max-w-4xl px-2 mx-auto">
         <header
             class="py-12 flex flex-col md:flex-row gap-8 justify-between items-center"
         >
@@ -29,12 +123,16 @@ import Face from "../components/face.astro";
                 <h1 class="text-6xl text-primary font-bold">Anirudha</h1>
                 <ul class="flex gap-4">
                     <li class="flex items-center gap-2">
-                        <div class="h-1 w-1 rounded-full bg-[#89d36a]"></div>
-                        <span class="text-secondary">online</span>
+                        {is_online ? <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                        <span class="text-secondary">online</span> : <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                        <span class="text-secondary">not online</span>}
+
                     </li>
                     <li class="flex items-center gap-2">
-                        <div class="h-1 w-1 rounded-full bg-error"></div>
-                        <span class="text-secondary">not coding</span>
+                        {is_coding ? <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                        <span class="text-secondary">coding</span> : <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                        <span class="text-secondary">not coding</span>}
+
                     </li>
                 </ul>
                 <p>just a kid who codes (too much)</p>
@@ -89,12 +187,20 @@ import Face from "../components/face.astro";
                     </p>
                 </div>
                 <div>
-                    <a class="text-xl text-secondary underline" href="#"
+                    <a class="text-xl text-secondary underline" href="/"
                         ><h3>project b6</h3></a
                     >
                     <p class="mt-1">Coming soon (trust me bro)</p>
                 </div>
             </div>
         </div>
+        <Stats
+            client:load
+            totals={totals}
+            days={days}
+            codingByLanguage={codingByLanguage}
+            heatmapDays={heatmapDays}
+            heatmapCodingByLanguage={heatmapCodingByLanguage}
+        />
     </main>
 </Layout>
