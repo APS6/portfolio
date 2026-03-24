@@ -7,17 +7,11 @@ import db from "@astrojs/db";
 
 import svelte from "@astrojs/svelte";
 
-import cloudflare from "@astrojs/cloudflare";
-
-import node from "@astrojs/node";
-
+import vercel from "@astrojs/vercel";
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
-    resolve: {
-      noExternal: ["layercake", "layerchart"],
-    },
   },
 
   fonts: [
@@ -29,8 +23,10 @@ export default defineConfig({
   ],
 
   integrations: [db(), svelte()],
-  adapter: node({
-    mode: "standalone",
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
   }),
   output: "server",
 });
