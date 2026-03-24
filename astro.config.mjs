@@ -7,6 +7,10 @@ import db from "@astrojs/db";
 
 import svelte from "@astrojs/svelte";
 
+import cloudflare from "@astrojs/cloudflare";
+
+import node from "@astrojs/node";
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -25,4 +29,8 @@ export default defineConfig({
   ],
 
   integrations: [db(), svelte()],
+  adapter: node({
+    mode: "standalone",
+  }),
+  output: "server",
 });

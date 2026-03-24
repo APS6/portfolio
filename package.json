@@ -9,10 +9,13 @@
     "dev": "astro dev --remote",
     "build": "astro build --remote",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-types": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.1.3",
     "@astrojs/db": "^0.20.1",
+    "@astrojs/node": "^10.0.3",
     "@astrojs/svelte": "^8.0.3",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.0.8",
@@ -21,6 +24,7 @@
     "layerchart": "^1.0.13",
     "svelte": "^5.54.1",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.76.0"
   }
 }

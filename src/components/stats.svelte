@@ -11,18 +11,76 @@
         Text,
         Tooltip,
     } from "layerchart";
-    import { scaleThreshold, scaleTime } from "d3-scale";
-    import { timeFormat } from "d3-time-format";
+    import { scaleThreshold, scaleUtc } from "d3-scale";
+    import { utcFormat } from "d3-time-format";
     import { onMount } from "svelte";
+    import { fly } from "svelte/transition";
+    import { actions } from "astro:actions";
 
     export let totals;
     export let days;
     export let codingByLanguage;
     export let heatmapDays;
     export let heatmapCodingByLanguage;
+    let tickCount = 15;
 
-    const formatTick = timeFormat("%b %d");
-    const formatTooltip = timeFormat("%a, %b %d");
+    const durationOptions = [
+        { value: "90", label: "3 months" },
+        { value: "30", label: "30 days" },
+        { value: "7", label: "7 days" },
+        { value: "2", label: "48 hours" },
+    ];
+
+    let selectedDuration = durationOptions[1];
+    let durationMenuOpen = false;
+
+    const toggleDurationMenu = () => {
+        durationMenuOpen = !durationMenuOpen;
+    };
+
+    const selectDuration = async (option) => {
+        selectedDuration = option;
+        durationMenuOpen = false;
+        useHourly = Number(selectedDuration.value) < 7;
+        updateTickCount();
+        if (useHourly) {
+            const { data, error } = await actions.fetchHours(
+                selectedDuration.value,
+            );
+            if (!error && data) {
+                totals = data.totals;
+                hours = data.hours;
+                codingByLanguage = data.codingByLanguage;
+            }
+        } else {
+            const { data, error } = await actions.fetchDays(
+                selectedDuration.value,
+            );
+            if (!error && data) {
+                totals = data.totals;
+                days = data.days;
+                codingByLanguage = data.codingByLanguage;
+            }
+        }
+    };
+
+    const formatTickDay = utcFormat("%b %d");
+    const formatTickHour = utcFormat("%H:%M");
+    const formatTooltipDay = utcFormat("%a, %b %d");
+    const formatTooltipHour = (value) => {
+        const start = utcFormat("%a, %b %d · %H:%M")(value);
+        const end = utcFormat("%H:%M")(
+            new Date(value.getTime() + 60 * 60 * 1000),
+        );
+        return `${start} - ${end} IST`;
+    };
+    const IST_OFFSET_MINUTES = 330;
+    const toIST = (value) =>
+        new Date(value.getTime() + IST_OFFSET_MINUTES * 60 * 1000);
+    const formatTick = (value) =>
+        useHourly ? formatTickHour(toIST(value)) : formatTickDay(value);
+    const formatTooltip = (value) =>
+        useHourly ? formatTooltipHour(toIST(value)) : formatTooltipDay(value);
 
     const metrics = [
         "keystrokes",
@@ -81,79 +139,69 @@
         return `${year}-${month}-${day}`;
     };
 
-    const seriesData = (days ?? []).map((day) => ({
-        date: new Date(day.timestamp * 1000),
-        mouse_clicks: day.mouse_clicks ?? 0,
-        keystrokes: day.keystrokes ?? 0,
-        mouse_scroll_mm: (day.mouse_scroll_mm ?? 0) / 10,
-        mouse_distance_mm: (day.mouse_distance_mm ?? 0) / 10,
-        chars_written: day.chars_written ?? 0,
-        keybinds: day.keybinds ?? 0,
-    }));
+    const normalizeTimestamp = (timestamp, stepSeconds) =>
+        Math.floor(timestamp / stepSeconds) * stepSeconds;
 
-    const codingRows = codingByLanguage ?? [];
-    const heatmapDaysSource = heatmapDays ?? days ?? [];
-    const heatmapCodingRows = heatmapCodingByLanguage ?? codingByLanguage ?? [];
-
-    const codingMinutesByDate = new Map();
-    for (const row of codingRows) {
-        const minutes = (row.seconds ?? 0) / 60;
-        codingMinutesByDate.set(
-            row.date,
-            (codingMinutesByDate.get(row.date) ?? 0) + minutes,
+    const buildFilledRows = (rows, stepSeconds, durationDays) => {
+        const countSteps = Math.max(
+            1,
+            Math.round(durationDays * (stepSeconds === 3600 ? 24 : 1)),
         );
-    }
 
-    const heatmapCodingMinutesByDate = new Map();
-    for (const row of heatmapCodingRows) {
-        const minutes = (row.seconds ?? 0) / 60;
-        heatmapCodingMinutesByDate.set(
-            row.date,
-            (heatmapCodingMinutesByDate.get(row.date) ?? 0) + minutes,
-        );
-    }
+        const normalizedRows = new Map();
+        for (const row of rows ?? []) {
+            const ts = normalizeTimestamp(row.timestamp, stepSeconds);
+            normalizedRows.set(ts, { ...row, timestamp: ts });
+        }
 
-    const timeByLanguageMap = new Map();
-    const charsByLanguageMap = new Map();
+        const nowSeconds = Math.floor(Date.now() / 1000);
+        const endBase =
+            normalizedRows.size > 0
+                ? Math.max(...normalizedRows.keys())
+                : nowSeconds;
+        const end = normalizeTimestamp(endBase, stepSeconds);
+        const start = end - (countSteps - 1) * stepSeconds;
 
-    for (const row of codingRows) {
-        const language = row.language ?? "Unknown";
-        const minutes = (row.seconds ?? 0) / 60;
-        timeByLanguageMap.set(
-            language,
-            (timeByLanguageMap.get(language) ?? 0) + minutes,
-        );
-        charsByLanguageMap.set(
-            language,
-            (charsByLanguageMap.get(language) ?? 0) + (row.chars_written ?? 0),
-        );
-    }
+        const emptyRow = {
+            mouse_clicks: 0,
+            keystrokes: 0,
+            mouse_scroll_mm: 0,
+            mouse_distance_mm: 0,
+            chars_written: 0,
+            keybinds: 0,
+            active_minutes: 0,
+            coding_minutes: 0,
+        };
 
+        const filled = [];
+        for (let ts = start; ts <= end; ts += stepSeconds) {
+            const row = normalizedRows.get(ts);
+            filled.push(
+                row ? { ...emptyRow, ...row } : { ...emptyRow, timestamp: ts },
+            );
+        }
+        return filled;
+    };
+
+    let hours = [];
+    let useHourly = false;
+    let timeSeriesRows = [];
+    let filledTimeSeriesRows = [];
+    let seriesData = [];
+    let codingRows = [];
+    let heatmapDaysSource = [];
+    let heatmapCodingRows = [];
+    let heatmapCodingMinutesByDate = new Map();
+    let timeByLanguageMap = new Map();
+    let charsByLanguageMap = new Map();
     const TOP_LANGUAGES = 10;
-
-    const timeByLanguageAll = Array.from(
-        timeByLanguageMap,
-        ([language, value]) => ({ language, value }),
-    ).sort((a, b) => b.value - a.value);
-
-    const charsByLanguageAll = Array.from(
-        charsByLanguageMap,
-        ([language, value]) => ({ language, value }),
-    ).sort((a, b) => b.value - a.value);
-
-    const timeByLanguage = timeByLanguageAll.slice(0, TOP_LANGUAGES);
-    const charsByLanguage = charsByLanguageAll.slice(0, TOP_LANGUAGES);
-
-    const timeLanguages = timeByLanguage.map((row) => row.language);
-    const charsLanguages = charsByLanguage.map((row) => row.language);
-
-    const allLanguages = Array.from(
-        new Set([
-            ...timeByLanguageAll.map((row) => row.language),
-            ...charsByLanguageAll.map((row) => row.language),
-        ]),
-    );
-
+    let timeByLanguageAll = [];
+    let charsByLanguageAll = [];
+    let timeByLanguage = [];
+    let charsByLanguage = [];
+    let timeLanguages = [];
+    let charsLanguages = [];
+    let allLanguages = [];
     const languagePalette = [
         "#eb6f92",
         "#f6c177",
@@ -166,26 +214,10 @@
         "#908caa",
         "#6e6a86",
     ];
-
-    const languageColors = new Map(
-        allLanguages.map((language, index) => [
-            language,
-            languagePalette[index % languagePalette.length],
-        ]),
-    );
-
-    const languageColorRange = allLanguages.map(
-        (language) => languageColors.get(language) ?? "#6e6a86",
-    );
-
-    const totalTimeMinutes = timeByLanguageAll.reduce(
-        (acc, row) => acc + row.value,
-        0,
-    );
-    const totalChars = charsByLanguageAll.reduce(
-        (acc, row) => acc + row.value,
-        0,
-    );
+    let languageColors = new Map();
+    let languageColorRange = [];
+    let totalTimeMinutes = 0;
+    let totalChars = 0;
 
     const activityMetrics = ["active_minutes", "coding_minutes"];
 
@@ -199,79 +231,235 @@
         coding_minutes: "#ebbcba",
     };
 
-    const activitySeriesData = (days ?? []).map((day) => ({
-        date: new Date(day.timestamp * 1000),
-        active_minutes: day.active_minutes ?? 0,
-        coding_minutes: codingMinutesByDate.get(day.timestamp) ?? 0,
+    let activitySeriesData = [];
+    let commitHeatmapData = [];
+    let codingHeatmapData = [];
+    let commitHeatmapByDate = new Map();
+    let codingHeatmapByDate = new Map();
+    const heatmapMonths = 3;
+    let heatmapEndBase = new Date();
+    let heatmapStart = new Date();
+    let heatmapEnd = new Date();
+
+    $: timeSeriesRows = useHourly ? (hours ?? []) : (days ?? []);
+    $: filledTimeSeriesRows = buildFilledRows(
+        timeSeriesRows,
+        useHourly ? 3600 : 86400,
+        Number(selectedDuration.value),
+    );
+
+    $: seriesData = (filledTimeSeriesRows ?? []).map((row) => ({
+        date: new Date(row.timestamp * 1000),
+        mouse_clicks: row.mouse_clicks ?? 0,
+        keystrokes: row.keystrokes ?? 0,
+        mouse_scroll_mm: (row.mouse_scroll_mm ?? 0) / 10,
+        mouse_distance_mm: (row.mouse_distance_mm ?? 0) / 10,
+        chars_written: row.chars_written ?? 0,
+        keybinds: row.keybinds ?? 0,
     }));
 
-    const commitHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
+    $: codingRows = codingByLanguage ?? [];
+    $: heatmapDaysSource = heatmapDays ?? days ?? [];
+    $: heatmapCodingRows = heatmapCodingByLanguage ?? codingByLanguage ?? [];
+
+    $: {
+        heatmapCodingMinutesByDate = new Map();
+        for (const row of heatmapCodingRows) {
+            const minutes = (row.seconds ?? 0) / 60;
+            heatmapCodingMinutesByDate.set(
+                row.date,
+                (heatmapCodingMinutesByDate.get(row.date) ?? 0) + minutes,
+            );
+        }
+    }
+
+    $: {
+        timeByLanguageMap = new Map();
+        charsByLanguageMap = new Map();
+
+        for (const row of codingRows) {
+            const language = row.language ?? "Unknown";
+            const minutes = (row.seconds ?? 0) / 60;
+            timeByLanguageMap.set(
+                language,
+                (timeByLanguageMap.get(language) ?? 0) + minutes,
+            );
+            charsByLanguageMap.set(
+                language,
+                (charsByLanguageMap.get(language) ?? 0) +
+                    (row.chars_written ?? 0),
+            );
+        }
+    }
+
+    $: timeByLanguageAll = Array.from(
+        timeByLanguageMap,
+        ([language, value]) => ({ language, value }),
+    ).sort((a, b) => b.value - a.value);
+
+    $: charsByLanguageAll = Array.from(
+        charsByLanguageMap,
+        ([language, value]) => ({ language, value }),
+    ).sort((a, b) => b.value - a.value);
+
+    $: timeByLanguage = timeByLanguageAll.slice(0, TOP_LANGUAGES);
+    $: charsByLanguage = charsByLanguageAll.slice(0, TOP_LANGUAGES);
+
+    $: timeLanguages = timeByLanguage.map((row) => row.language);
+    $: charsLanguages = charsByLanguage.map((row) => row.language);
+
+    $: allLanguages = Array.from(
+        new Set([
+            ...timeByLanguageAll.map((row) => row.language),
+            ...charsByLanguageAll.map((row) => row.language),
+        ]),
+    );
+
+    $: languageColors = new Map(
+        allLanguages.map((language, index) => [
+            language,
+            languagePalette[index % languagePalette.length],
+        ]),
+    );
+
+    $: languageColorRange = allLanguages.map(
+        (language) => languageColors.get(language) ?? "#6e6a86",
+    );
+
+    $: totalTimeMinutes = timeByLanguageAll.reduce(
+        (acc, row) => acc + row.value,
+        0,
+    );
+    $: totalChars = charsByLanguageAll.reduce((acc, row) => acc + row.value, 0);
+
+    $: activitySeriesData = (filledTimeSeriesRows ?? []).map((row) => ({
+        date: new Date(row.timestamp * 1000),
+        active_minutes: row.active_minutes ?? 0,
+        coding_minutes: row.coding_minutes ?? 0,
+    }));
+
+    $: commitHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
         date: new Date(day.timestamp * 1000),
         value: day.git_commits ?? 0,
     }));
 
-    const codingHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
+    $: codingHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
         date: new Date(day.timestamp * 1000),
         value: heatmapCodingMinutesByDate.get(day.timestamp) ?? 0,
     }));
 
-    const commitHeatmapByDate = new Map();
-    for (const day of commitHeatmapData) {
-        commitHeatmapByDate.set(formatDateKey(day.date), day.value ?? 0);
+    $: {
+        commitHeatmapByDate = new Map();
+        for (const day of commitHeatmapData) {
+            commitHeatmapByDate.set(formatDateKey(day.date), day.value ?? 0);
+        }
     }
 
-    const codingHeatmapByDate = new Map();
-    for (const day of codingHeatmapData) {
-        codingHeatmapByDate.set(formatDateKey(day.date), day.value ?? 0);
+    $: {
+        codingHeatmapByDate = new Map();
+        for (const day of codingHeatmapData) {
+            codingHeatmapByDate.set(formatDateKey(day.date), day.value ?? 0);
+        }
     }
 
-    const heatmapMonths = 3;
-    const heatmapEndBase =
-        commitHeatmapData[commitHeatmapData.length - 1]?.date ?? new Date();
-    const heatmapStart = new Date(heatmapEndBase);
-    heatmapStart.setDate(1);
-    heatmapStart.setMonth(heatmapStart.getMonth() - (heatmapMonths - 1));
-    if (heatmapStart.getFullYear() !== heatmapEndBase.getFullYear()) {
-        heatmapStart.setFullYear(heatmapEndBase.getFullYear(), 0, 1);
-    }
-    heatmapStart.setHours(0, 0, 0, 0);
-
-    const heatmapEnd = new Date(heatmapEndBase);
     heatmapEnd.setHours(0, 0, 0, 0);
     heatmapEnd.setDate(heatmapEnd.getDate() + 1);
+    $: {
+        heatmapEndBase =
+            commitHeatmapData[commitHeatmapData.length - 1]?.date ?? new Date();
+        heatmapStart = new Date(heatmapEndBase);
+        heatmapStart.setDate(1);
+        heatmapStart.setMonth(heatmapStart.getMonth() - (heatmapMonths - 1));
+        if (heatmapStart.getFullYear() !== heatmapEndBase.getFullYear()) {
+            heatmapStart.setFullYear(heatmapEndBase.getFullYear(), 0, 1);
+        }
+        heatmapStart.setHours(0, 0, 0, 0);
 
-    let tickCount = 15;
+        heatmapEnd = new Date(heatmapEndBase);
+        heatmapEnd.setHours(0, 0, 0, 0);
+        heatmapEnd.setDate(heatmapEnd.getDate() + 1);
+    }
+
+    let mq;
+
+    const updateTickCount = () => {
+        if (!mq) return;
+        if (mq.matches) {
+            if (selectedDuration.value < 7) {
+                tickCount = 4;
+            } else {
+                tickCount = 5;
+            }
+        } else {
+            if (selectedDuration.value < 7) {
+                tickCount = 12;
+            } else if (selectedDuration.value < 15) {
+                tickCount = selectedDuration.value;
+            } else {
+                tickCount = 15;
+            }
+        }
+    };
 
     onMount(() => {
-        const mq = window.matchMedia("(max-width: 900px)");
+        mq = window.matchMedia("(max-width: 900px)");
 
-        const update = () => {
-            tickCount = mq.matches ? 7 : 15;
-        };
-
-        update();
-        mq.addEventListener("change", update);
-        return () => mq.removeEventListener("change", update);
+        updateTickCount();
+        mq.addEventListener("change", updateTickCount);
+        return () => mq.removeEventListener("change", updateTickCount);
     });
 </script>
 
 <div id="stats" class="mt-16">
     <div class="flex justify-between items-center">
         <h2 class="text-primary font-semibold text-xl">stats</h2>
-        <div
-            class="bg-tertiary text-on-tertiary pl-4 pr-2 py-1 rounded-full flex items-center gap-1"
-        >
-            <span>30 days</span>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                ><!-- Icon from Remix Icon by Remix Design - https://github.com/Remix-Design/RemixIcon/blob/master/License --><path
-                    fill="currentColor"
-                    d="m12 15l-4.243-4.242l1.415-1.414L12 12.172l2.828-2.828l1.415 1.414z"
-                /></svg
+        <div class="relative">
+            <button
+                type="button"
+                class="group bg-tertiary text-on-tertiary pl-4 pr-2 py-1 rounded-full flex items-center gap-1 cursor-pointer"
+                aria-haspopup="true"
+                aria-expanded={durationMenuOpen}
+                on:click={toggleDurationMenu}
             >
+                <span class="font-medium">{selectedDuration.label}</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    class="transition-transform group-hover:translate-y-0.5"
+                    class:rotate-180={durationMenuOpen}
+                >
+                    <path
+                        fill="currentColor"
+                        d="m12 15l-4.243-4.242l1.415-1.414L12 12.172l2.828-2.828l1.415 1.414z"
+                    />
+                </svg>
+            </button>
+            {#if durationMenuOpen}
+                <div
+                    class="absolute right-0 z-50 mt-2 w-40 rounded-xl bg-surface text-on-surface border border-outline shadow-xl backdrop-blur-sm overflow-hidden"
+                    transition:fly={{ y: -6, duration: 160 }}
+                >
+                    {#each durationOptions as option}
+                        <button
+                            class={`w-full text-left px-4 py-2 hover:bg-surface-variant/60 transition cursor-pointer ${
+                                selectedDuration.value === option.value
+                                    ? "bg-surface-variant/60"
+                                    : ""
+                            }`}
+                            on:click={() => selectDuration(option)}
+                        >
+                            {option.label}
+                            <span class="text-xs text-secondary"
+                                >{option.value >= 7
+                                    ? "UTC"
+                                    : "IST (UTC+5:30)"}</span
+                            >
+                        </button>
+                    {/each}
+                </div>
+            {/if}
         </div>
     </div>
     <div class="flex flex-wrap gap-2 mt-3">
@@ -333,7 +521,7 @@
             <Chart
                 data={seriesData}
                 x="date"
-                xScale={scaleTime()}
+                xScale={scaleUtc()}
                 y={metrics}
                 yDomain={[0, null]}
                 padding={{ left: 32, bottom: 24, right: 0 }}
@@ -428,7 +616,7 @@
             <Chart
                 data={activitySeriesData}
                 x="date"
-                xScale={scaleTime()}
+                xScale={scaleUtc()}
                 y={activityMetrics}
                 yDomain={[0, null]}
                 padding={{ left: 32, bottom: 24, right: 0 }}

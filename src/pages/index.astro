@@ -5,11 +5,9 @@ import Stats from "../components/stats.svelte"
 
 import { db, current_status, stats_day, coding_by_language, gte } from "astro:db";
 
-const [status] = await db.select().from(current_status).limit(1);
-const now = Math.floor(Date.now() / 1000);
+const statusPromise = db.select().from(current_status).limit(1);
 
-const is_online = !!status && now - status.last_activity_at <= 300;
-const is_coding = !!status && now - status.last_coding_at <= 300;
+const now = Math.floor(Date.now() / 1000);
 
 const month_ago = now - 30 * 24 * 60 * 60;
 const three_months_ago = now - 90 * 24 * 60 * 60;
@@ -23,10 +21,8 @@ const daysPromise = db
     mouse_distance_mm: stats_day.mouse_distance_mm,
     mouse_scroll_mm: stats_day.mouse_scroll_mm,
     chars_written: stats_day.chars_written,
-    git_commits: stats_day.git_commits,
-    git_lines_added: stats_day.git_lines_added,
-    git_lines_removed: stats_day.git_lines_removed,
     active_minutes: stats_day.active_minutes,
+    coding_minutes: stats_day.coding_minutes,
   })
   .from(stats_day)
   .where(gte(stats_day.timestamp, month_ago))
@@ -61,13 +57,19 @@ const heatmapCodingByLanguagePromise = db
   .where(gte(coding_by_language.date, three_months_ago))
   .orderBy((table) => table.date);
 
-const [days, codingByLanguage, heatmapDays, heatmapCodingByLanguage] =
+const [[status], days, codingByLanguage, heatmapDays, heatmapCodingByLanguage] =
   await Promise.all([
+    statusPromise,
     daysPromise,
     codingByLanguagePromise,
     heatmapDaysPromise,
     heatmapCodingByLanguagePromise,
   ]);
+
+
+const is_online = !!status && now - status.last_activity_at <= 300;
+const is_coding = !!status && now - status.last_coding_at <= 300;
+
 
 const totals = days.reduce(
   (acc, day) => ({
@@ -77,10 +79,8 @@ const totals = days.reduce(
     mouse_distance_mm: acc.mouse_distance_mm + (day.mouse_distance_mm ?? 0),
     mouse_scroll_mm: acc.mouse_scroll_mm + (day.mouse_scroll_mm ?? 0),
     chars_written: acc.chars_written + (day.chars_written ?? 0),
-    git_commits: acc.git_commits + (day.git_commits ?? 0),
-    git_lines_added: acc.git_lines_added + (day.git_lines_added ?? 0),
-    git_lines_removed: acc.git_lines_removed + (day.git_lines_removed ?? 0),
     active_minutes: acc.active_minutes + (day.active_minutes ?? 0),
+    coding_minutes: acc.coding_minutes + (day.coding_minutes ?? 0),
   }),
   {
     keystrokes: 0,
@@ -89,10 +89,8 @@ const totals = days.reduce(
     mouse_distance_mm: 0,
     mouse_scroll_mm: 0,
     chars_written: 0,
-    git_commits: 0,
-    git_lines_added: 0,
-    git_lines_removed: 0,
     active_minutes: 0,
+    coding_minutes: 0,
   }
 );
 ---

@@ -18,6 +18,7 @@ const stats_hour = defineTable({
     mouse_scroll_mm: column.number({ default: 0 }),
     chars_written: column.number({ default: 0 }),
     active_minutes: column.number({ default: 0 }),
+    coding_minutes: column.number({ default: 0 }),
   },
 });
 
@@ -34,6 +35,7 @@ const stats_day = defineTable({
     git_lines_added: column.number({ default: 0 }),
     git_lines_removed: column.number({ default: 0 }),
     active_minutes: column.number({ default: 0 }),
+    coding_minutes: column.number({ default: 0 }),
   },
 });
 
