@@ -255,7 +255,7 @@
     });
 </script>
 
-<div class="mt-16">
+<div id="stats" class="mt-16">
     <div class="flex justify-between items-center">
         <h2 class="text-primary font-semibold text-xl">stats</h2>
         <div
@@ -327,7 +327,7 @@
         </div>
     </div>
     <div
-        class="bg-surface-variant text-on-surface-variant rounded mt-4 px-8 py-4"
+        class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline mt-4 px-8 py-4"
     >
         <div class="h-75">
             <Chart
@@ -422,7 +422,7 @@
     </div>
 
     <div
-        class="bg-surface-variant text-on-surface-variant rounded mt-4 px-8 py-4"
+        class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline mt-4 px-8 py-4"
     >
         <div class="h-75">
             <Chart
@@ -517,8 +517,10 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div class="bg-surface-variant text-on-surface-variant rounded p-6">
-            <div class="h-[260px]">
+        <div
+            class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
+        >
+            <div class="h-65">
                 <Chart
                     data={timeByLanguageAll}
                     x="value"
@@ -586,8 +588,10 @@
             </div>
         </div>
 
-        <div class="bg-surface-variant text-on-surface-variant rounded p-6">
-            <div class="h-[260px]">
+        <div
+            class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
+        >
+            <div class="h-65">
                 <Chart
                     data={charsByLanguageAll}
                     x="value"
@@ -657,9 +661,11 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div class="bg-surface-variant text-on-surface-variant rounded p-6">
+        <div
+            class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
+        >
             <h3 class="text-sm text-secondary mb-2">git commits</h3>
-            <div class="h-[200px] p-4 border border-tertiary/40 rounded">
+            <div class="h-50 p-4 border border-outline rounded">
                 <Chart
                     data={commitHeatmapData}
                     x="date"
@@ -713,9 +719,11 @@
             </div>
         </div>
 
-        <div class="bg-surface-variant text-on-surface-variant rounded p-6">
+        <div
+            class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
+        >
             <h3 class="text-sm text-secondary mb-2">coding minutes</h3>
-            <div class="h-[200px] p-4 border border-tertiary/40 rounded">
+            <div class="h-50 p-4 border border-outline rounded">
                 <Chart
                     data={codingHeatmapData}
                     x="date"

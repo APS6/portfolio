@@ -98,7 +98,7 @@ const totals = days.reduce(
 ---
 
 <Layout>
-    <div class="px-2 md:px-0">
+    <div class="px-2 lg:px-0">
         <nav
             class="max-w-4xl bg-surface-variant w-full md:mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded"
         >
@@ -106,12 +106,9 @@ const totals = days.reduce(
             <ul class="flex gap-4">
                 <a
                     class="text-on-surface-variant underline"
-                    href="https://github.com/APS6">github</a
+                    href="https://github.com/APS6"><li>github</li></a
                 >
-                <a class="text-on-surface-variant underline" href="#projects"
-                    >projects</a
-                >
-                <a class="text-on-surface-variant underline" href="#stats">stats</a>
+                <a class="text-on-surface-variant underline" href="#stats"><li>stats</li></a>
             </ul>
         </nav>
     </div>
@@ -146,17 +143,6 @@ const totals = days.reduce(
                 <div>
                     <a
                         class="text-xl text-secondary underline"
-                        href="https://study.anirudhasah.com"
-                        ><h3>studybuddy</h3></a
-                    >
-                    <p class="mt-1">
-                        An AI-powered platform to empower students with
-                        personalized tests and advice
-                    </p>
-                </div>
-                <div>
-                    <a
-                        class="text-xl text-secondary underline"
                         href="https://login.anirudhasah.com"
                         ><h3>how did i login</h3></a
                     >
@@ -179,6 +165,17 @@ const totals = days.reduce(
                 <div>
                     <a
                         class="text-xl text-secondary underline"
+                        href="https://study.anirudhasah.com"
+                        ><h3>studybuddy</h3></a
+                    >
+                    <p class="mt-1">
+                        An AI-powered platform to empower students with
+                        personalized tests and advice
+                    </p>
+                </div>
+                <div>
+                    <a
+                        class="text-xl text-secondary underline"
                         href="https://gicpatlot.in"><h3>gicpatlot.in</h3></a
                     >
                     <p class="mt-1">
@@ -195,12 +192,24 @@ const totals = days.reduce(
             </div>
         </div>
         <Stats
-            client:load
+            client:visible
             totals={totals}
             days={days}
             codingByLanguage={codingByLanguage}
             heatmapDays={heatmapDays}
             heatmapCodingByLanguage={heatmapCodingByLanguage}
         />
+        <div class="my-8">
+            <h2 class="text-primary font-semibold text-xl">contact</h2>
+            <ul class="flex flex-wrap items-center gap-4 mt-2 text-lg text-secondary">
+                <a
+                    class=" underline"
+                    href="https://github.com/APS6"><li>github</li></a
+                >
+                <a class=" underline" href="https://x.com/anirudhasah"><li>twitter</li></a>
+                <a class=" underline" href="https://discord.com/users/752376627937411103"><li>discord</li></a>
+                <a class=" underline" href="mailto:me@anirudhasah.com"><li>me@anirudhasah.com</li></a>
+            </ul>
+        </div>
     </main>
 </Layout>

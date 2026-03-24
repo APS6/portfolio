@@ -11,6 +11,9 @@ import svelte from "@astrojs/svelte";
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      noExternal: ["layercake", "layerchart"],
+    },
   },
 
   fonts: [
