@@ -23,10 +23,6 @@ export default defineConfig({
   ],
 
   integrations: [db(), svelte()],
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-  }),
+  adapter: vercel(),
   output: "server",
 });

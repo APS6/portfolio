@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { Font } from "astro:assets";
+import Analytics from "@vercel/analytics/astro";
 ---
 
 <!doctype html>
@@ -65,6 +66,7 @@ import { Font } from "astro:assets";
         />
         <title>Anirudha Pratap Sah (APS)</title>
         <Font cssVariable="--font-google" />
+        <Analytics />
     </head>
     <body class="bg-surface text-on-surface font-mono">
         <slot />
