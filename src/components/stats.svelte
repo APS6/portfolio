@@ -133,10 +133,21 @@
     };
 
     const formatDateKey = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(date.getUTCDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
+    };
+
+    const normalizeHeatmapDate = (timestamp) => {
+        const date = new Date(timestamp * 1000);
+        return new Date(
+            Date.UTC(
+                date.getUTCFullYear(),
+                date.getUTCMonth(),
+                date.getUTCDate(),
+            ),
+        );
     };
 
     const normalizeTimestamp = (timestamp, stepSeconds) =>
@@ -339,12 +350,12 @@
     }));
 
     $: commitHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
-        date: new Date(day.timestamp * 1000),
+        date: normalizeHeatmapDate(day.timestamp),
         value: day.git_commits ?? 0,
     }));
 
     $: codingHeatmapData = (heatmapDaysSource ?? []).map((day) => ({
-        date: new Date(day.timestamp * 1000),
+        date: normalizeHeatmapDate(day.timestamp),
         value: heatmapCodingMinutesByDate.get(day.timestamp) ?? 0,
     }));
 
@@ -362,22 +373,24 @@
         }
     }
 
-    heatmapEnd.setHours(0, 0, 0, 0);
-    heatmapEnd.setDate(heatmapEnd.getDate() + 1);
+    heatmapEnd.setUTCHours(0, 0, 0, 0);
+    heatmapEnd.setUTCDate(heatmapEnd.getUTCDate() + 1);
     $: {
         heatmapEndBase =
             commitHeatmapData[commitHeatmapData.length - 1]?.date ?? new Date();
         heatmapStart = new Date(heatmapEndBase);
-        heatmapStart.setDate(1);
-        heatmapStart.setMonth(heatmapStart.getMonth() - (heatmapMonths - 1));
-        if (heatmapStart.getFullYear() !== heatmapEndBase.getFullYear()) {
-            heatmapStart.setFullYear(heatmapEndBase.getFullYear(), 0, 1);
+        heatmapStart.setUTCDate(1);
+        heatmapStart.setUTCMonth(
+            heatmapStart.getUTCMonth() - (heatmapMonths - 1),
+        );
+        if (heatmapStart.getUTCFullYear() !== heatmapEndBase.getUTCFullYear()) {
+            heatmapStart.setUTCFullYear(heatmapEndBase.getUTCFullYear(), 0, 1);
         }
-        heatmapStart.setHours(0, 0, 0, 0);
+        heatmapStart.setUTCHours(0, 0, 0, 0);
 
         heatmapEnd = new Date(heatmapEndBase);
-        heatmapEnd.setHours(0, 0, 0, 0);
-        heatmapEnd.setDate(heatmapEnd.getDate() + 1);
+        heatmapEnd.setUTCHours(0, 0, 0, 0);
+        heatmapEnd.setUTCDate(heatmapEnd.getUTCDate() + 1);
     }
 
     let mq;
