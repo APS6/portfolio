@@ -530,7 +530,7 @@
     <div
         class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline mt-4 px-8 py-4"
     >
-        <div class="h-75">
+        <div class="h-75 chart-touch-scroll">
             <Chart
                 data={seriesData}
                 x="date"
@@ -625,7 +625,7 @@
     <div
         class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline mt-4 px-8 py-4"
     >
-        <div class="h-75">
+        <div class="h-75 chart-touch-scroll">
             <Chart
                 data={activitySeriesData}
                 x="date"
@@ -721,7 +721,7 @@
         <div
             class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
         >
-            <div class="h-65">
+            <div class="h-65 chart-touch-scroll">
                 <Chart
                     data={timeByLanguageAll}
                     x="value"
@@ -792,7 +792,7 @@
         <div
             class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
         >
-            <div class="h-65">
+            <div class="h-65 chart-touch-scroll">
                 <Chart
                     data={charsByLanguageAll}
                     x="value"
@@ -866,7 +866,9 @@
             class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
         >
             <h3 class="text-sm text-secondary mb-2">git commits</h3>
-            <div class="h-50 p-4 border border-outline rounded">
+            <div
+                class="h-50 p-4 border border-outline rounded chart-touch-scroll"
+            >
                 <Chart
                     data={commitHeatmapData}
                     x="date"
@@ -924,7 +926,9 @@
             class="bg-surface-variant text-on-surface-variant rounded border-2 border-outline p-6"
         >
             <h3 class="text-sm text-secondary mb-2">coding minutes</h3>
-            <div class="h-50 p-4 border border-outline rounded">
+            <div
+                class="h-50 p-4 border border-outline rounded chart-touch-scroll"
+            >
                 <Chart
                     data={codingHeatmapData}
                     x="date"
@@ -981,5 +985,13 @@
 <style>
     :global(.fill-surface-content) {
         fill: var(--color-on-surface-variant);
+    }
+
+    .chart-touch-scroll {
+        touch-action: pan-y;
+    }
+
+    :global(#stats .TooltipContext) {
+        touch-action: pan-y !important;
     }
 </style>
