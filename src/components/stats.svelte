@@ -745,14 +745,14 @@
                                 )}
                                 textAnchor="middle"
                                 verticalAnchor="middle"
-                                class="text-3xl fill-on-surface-variant"
+                                class="text-3xl fill-on-surface-variant select-none"
                                 dy={2}
                             />
                             <Text
                                 value="minutes"
                                 textAnchor="middle"
                                 verticalAnchor="middle"
-                                class="text-xs fill-on-surface-variant/70"
+                                class="text-xs fill-on-surface-variant/70 select-none"
                                 dy={20}
                             />
                         </Group>
@@ -816,14 +816,14 @@
                                 )}
                                 textAnchor="middle"
                                 verticalAnchor="middle"
-                                class="text-3xl fill-on-surface-variant"
+                                class="text-3xl fill-on-surface-variant select-none"
                                 dy={2}
                             />
                             <Text
                                 value="characters"
                                 textAnchor="middle"
                                 verticalAnchor="middle"
-                                class="text-xs fill-on-surface-variant/70"
+                                class="text-xs fill-on-surface-variant/70 select-none"
                                 dy={20}
                             />
                         </Group>
@@ -993,5 +993,11 @@
 
     :global(#stats .TooltipContext) {
         touch-action: pan-y !important;
+    }
+
+    :global(#stats svg text) {
+        user-select: none;
+        -webkit-user-select: none;
+        pointer-events: none;
     }
 </style>
