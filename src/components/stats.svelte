@@ -12,6 +12,7 @@
         Tooltip,
     } from "layerchart";
     import { scaleThreshold, scaleUtc } from "d3-scale";
+    import { timeWeek, timeYear } from "d3-time";
     import { utcFormat } from "d3-time-format";
     import { onMount } from "svelte";
     import { fly } from "svelte/transition";
@@ -245,8 +246,13 @@
     let activitySeriesData = [];
     let commitHeatmapData = [];
     let codingHeatmapData = [];
+    let commitHeatmapWindowData = [];
+    let codingHeatmapWindowData = [];
     let commitHeatmapByDate = new Map();
     let codingHeatmapByDate = new Map();
+    let heatmapCellSize = 24;
+    let heatmapWeekOffset = 0;
+    let heatmapWeekSpan = 1;
     const heatmapMonths = 3;
     let heatmapEndBase = new Date();
     let heatmapStart = new Date();
@@ -393,6 +399,21 @@
         heatmapEnd.setUTCDate(heatmapEnd.getUTCDate() + 1);
     }
 
+    $: commitHeatmapWindowData = commitHeatmapData.filter(
+        (day) => day.date >= heatmapStart && day.date < heatmapEnd,
+    );
+
+    $: codingHeatmapWindowData = codingHeatmapData.filter(
+        (day) => day.date >= heatmapStart && day.date < heatmapEnd,
+    );
+
+    $: heatmapWeekOffset = timeWeek.count(timeYear(heatmapStart), heatmapStart);
+    $: heatmapWeekSpan = Math.max(1, timeWeek.count(heatmapStart, heatmapEnd) + 1);
+
+    const getHeatmapTranslateX = (chartWidth) =>
+        (chartWidth - heatmapWeekSpan * heatmapCellSize) / 2 -
+        heatmapWeekOffset * heatmapCellSize;
+
     let mq;
 
     const updateTickCount = () => {
@@ -414,12 +435,22 @@
         }
     };
 
+    const updateHeatmapCellSize = () => {
+        if (!mq) return;
+        heatmapCellSize = mq.matches ? 20 : 24;
+    };
+
     onMount(() => {
         mq = window.matchMedia("(max-width: 900px)");
 
         updateTickCount();
+        updateHeatmapCellSize();
         mq.addEventListener("change", updateTickCount);
-        return () => mq.removeEventListener("change", updateTickCount);
+        mq.addEventListener("change", updateHeatmapCellSize);
+        return () => {
+            mq.removeEventListener("change", updateTickCount);
+            mq.removeEventListener("change", updateHeatmapCellSize);
+        };
     });
 </script>
 
@@ -870,7 +901,7 @@
                 class="h-50 p-4 border border-outline rounded chart-touch-scroll"
             >
                 <Chart
-                    data={commitHeatmapData}
+                    data={commitHeatmapWindowData}
                     x="date"
                     c={(d) =>
                         commitHeatmapByDate.get(formatDateKey(d.date)) ?? 0}
@@ -878,18 +909,22 @@
                     cDomain={[1, 3, 6]}
                     cRange={gitHeatmapColors}
                     let:tooltip
+                    let:width
                 >
                     <Svg>
-                        <Calendar
-                            start={heatmapStart}
-                            end={heatmapEnd}
-                            {tooltip}
-                            monthPath
-                            rx={6}
-                            ry={6}
-                            stroke="var(--color-surface-variant)"
-                            strokeWidth={2}
-                        />
+                        <Group x={getHeatmapTranslateX(width)}>
+                            <Calendar
+                                start={heatmapStart}
+                                end={heatmapEnd}
+                                cellSize={heatmapCellSize}
+                                {tooltip}
+                                monthPath
+                                rx={6}
+                                ry={6}
+                                stroke="var(--color-surface-variant)"
+                                strokeWidth={2}
+                            />
+                        </Group>
                     </Svg>
 
                     <Tooltip.Root
@@ -930,7 +965,7 @@
                 class="h-50 p-4 border border-outline rounded chart-touch-scroll"
             >
                 <Chart
-                    data={codingHeatmapData}
+                    data={codingHeatmapWindowData}
                     x="date"
                     c={(d) =>
                         codingHeatmapByDate.get(formatDateKey(d.date)) ?? 0}
@@ -938,18 +973,22 @@
                     cDomain={[15, 30, 60]}
                     cRange={codeHeatmapColors}
                     let:tooltip
+                    let:width
                 >
                     <Svg>
-                        <Calendar
-                            start={heatmapStart}
-                            end={heatmapEnd}
-                            {tooltip}
-                            monthPath
-                            rx={6}
-                            ry={6}
-                            stroke="var(--color-surface-variant)"
-                            strokeWidth={2}
-                        />
+                        <Group x={getHeatmapTranslateX(width)}>
+                            <Calendar
+                                start={heatmapStart}
+                                end={heatmapEnd}
+                                cellSize={heatmapCellSize}
+                                {tooltip}
+                                monthPath
+                                rx={6}
+                                ry={6}
+                                stroke="var(--color-surface-variant)"
+                                strokeWidth={2}
+                            />
+                        </Group>
                     </Svg>
 
                     <Tooltip.Root
