@@ -974,7 +974,7 @@
                     c={(d) =>
                         codingHeatmapByDate.get(formatDateKey(d.date)) ?? 0}
                     cScale={scaleThreshold().unknown(codeHeatmapColors[0])}
-                    cDomain={[15, 30, 60]}
+                    cDomain={[2, 30, 60]}
                     cRange={codeHeatmapColors}
                     let:tooltip
                     let:width
