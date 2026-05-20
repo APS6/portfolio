@@ -9,7 +9,7 @@ const statusPromise = db.select().from(current_status).limit(1);
 
 const now = Math.floor(Date.now() / 1000);
 
-const month_ago = now - 30 * 24 * 60 * 60;
+const two_month_ago = now - 60 * 24 * 60 * 60;
 const three_months_ago = now - 90 * 24 * 60 * 60;
 
 const daysPromise = db
@@ -25,7 +25,7 @@ const daysPromise = db
     coding_minutes: stats_day.coding_minutes,
   })
   .from(stats_day)
-  .where(gte(stats_day.timestamp, month_ago))
+  .where(gte(stats_day.timestamp, two_month_ago))
   .orderBy((table) => table.timestamp);
 
 const codingByLanguagePromise = db
@@ -36,7 +36,7 @@ const codingByLanguagePromise = db
     chars_written: coding_by_language.chars_written,
   })
   .from(coding_by_language)
-  .where(gte(coding_by_language.date, month_ago))
+  .where(gte(coding_by_language.date, two_month_ago))
   .orderBy((table) => table.date);
 
 const heatmapDaysPromise = db

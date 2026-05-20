@@ -27,6 +27,7 @@
 
     const durationOptions = [
         { value: "90", label: "3 months" },
+        { value: "60", label: "2 months" },
         { value: "30", label: "30 days" },
         { value: "7", label: "7 days" },
         { value: "2", label: "48 hours" },
@@ -408,7 +409,10 @@
     );
 
     $: heatmapWeekOffset = timeWeek.count(timeYear(heatmapStart), heatmapStart);
-    $: heatmapWeekSpan = Math.max(1, timeWeek.count(heatmapStart, heatmapEnd) + 1);
+    $: heatmapWeekSpan = Math.max(
+        1,
+        timeWeek.count(heatmapStart, heatmapEnd) + 1,
+    );
 
     const getHeatmapTranslateX = (chartWidth) =>
         (chartWidth - heatmapWeekSpan * heatmapCellSize) / 2 -
