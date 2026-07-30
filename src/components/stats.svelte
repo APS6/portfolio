@@ -425,6 +425,8 @@
         if (mq.matches) {
             if (selectedDuration.value < 7) {
                 tickCount = 4;
+            } else if (selectedDuration.value === "60") {
+                tickCount = 3;
             } else {
                 tickCount = 5;
             }
