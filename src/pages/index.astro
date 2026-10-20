@@ -1,9 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Face from "../components/face.astro";
-import Stats from "../components/stats.svelte"
+import Stats from "../components/stats.svelte";
 
-import { db, current_status, stats_day, coding_by_language, gte } from "astro:db";
+import {
+    db,
+    current_status,
+    stats_day,
+    coding_by_language,
+    gte,
+} from "astro:db";
 
 const statusPromise = db.select().from(current_status).limit(1);
 
@@ -13,121 +19,133 @@ const two_month_ago = now - 60 * 24 * 60 * 60;
 const three_months_ago = now - 90 * 24 * 60 * 60;
 
 const daysPromise = db
-  .select({
-    timestamp: stats_day.timestamp,
-    keystrokes: stats_day.keystrokes,
-    keybinds: stats_day.keybinds,
-    mouse_clicks: stats_day.mouse_clicks,
-    mouse_distance_mm: stats_day.mouse_distance_mm,
-    mouse_scroll_mm: stats_day.mouse_scroll_mm,
-    chars_written: stats_day.chars_written,
-    active_minutes: stats_day.active_minutes,
-    coding_minutes: stats_day.coding_minutes,
-  })
-  .from(stats_day)
-  .where(gte(stats_day.timestamp, two_month_ago))
-  .orderBy((table) => table.timestamp);
+    .select({
+        timestamp: stats_day.timestamp,
+        keystrokes: stats_day.keystrokes,
+        keybinds: stats_day.keybinds,
+        mouse_clicks: stats_day.mouse_clicks,
+        mouse_distance_mm: stats_day.mouse_distance_mm,
+        mouse_scroll_mm: stats_day.mouse_scroll_mm,
+        chars_written: stats_day.chars_written,
+        active_minutes: stats_day.active_minutes,
+        coding_minutes: stats_day.coding_minutes,
+    })
+    .from(stats_day)
+    .where(gte(stats_day.timestamp, two_month_ago))
+    .orderBy((table) => table.timestamp);
 
 const codingByLanguagePromise = db
-  .select({
-    date: coding_by_language.date,
-    language: coding_by_language.language,
-    seconds: coding_by_language.seconds,
-    chars_written: coding_by_language.chars_written,
-  })
-  .from(coding_by_language)
-  .where(gte(coding_by_language.date, two_month_ago))
-  .orderBy((table) => table.date);
+    .select({
+        date: coding_by_language.date,
+        language: coding_by_language.language,
+        seconds: coding_by_language.seconds,
+        chars_written: coding_by_language.chars_written,
+    })
+    .from(coding_by_language)
+    .where(gte(coding_by_language.date, two_month_ago))
+    .orderBy((table) => table.date);
 
 const heatmapDaysPromise = db
-  .select({
-    timestamp: stats_day.timestamp,
-    git_commits: stats_day.git_commits,
-  })
-  .from(stats_day)
-  .where(gte(stats_day.timestamp, three_months_ago))
-  .orderBy((table) => table.timestamp);
+    .select({
+        timestamp: stats_day.timestamp,
+        git_commits: stats_day.git_commits,
+    })
+    .from(stats_day)
+    .where(gte(stats_day.timestamp, three_months_ago))
+    .orderBy((table) => table.timestamp);
 
 const heatmapCodingByLanguagePromise = db
-  .select({
-    date: coding_by_language.date,
-    seconds: coding_by_language.seconds,
-  })
-  .from(coding_by_language)
-  .where(gte(coding_by_language.date, three_months_ago))
-  .orderBy((table) => table.date);
+    .select({
+        date: coding_by_language.date,
+        seconds: coding_by_language.seconds,
+    })
+    .from(coding_by_language)
+    .where(gte(coding_by_language.date, three_months_ago))
+    .orderBy((table) => table.date);
 
 const [[status], days, codingByLanguage, heatmapDays, heatmapCodingByLanguage] =
-  await Promise.all([
-    statusPromise,
-    daysPromise,
-    codingByLanguagePromise,
-    heatmapDaysPromise,
-    heatmapCodingByLanguagePromise,
-  ]);
-
+    await Promise.all([
+        statusPromise,
+        daysPromise,
+        codingByLanguagePromise,
+        heatmapDaysPromise,
+        heatmapCodingByLanguagePromise,
+    ]);
 
 const is_online = !!status && now - status.last_activity_at <= 300;
 const is_coding = !!status && now - status.last_coding_at <= 300;
 
-
 const totals = days.reduce(
-  (acc, day) => ({
-    keystrokes: acc.keystrokes + (day.keystrokes ?? 0),
-    keybinds: acc.keybinds + (day.keybinds ?? 0),
-    mouse_clicks: acc.mouse_clicks + (day.mouse_clicks ?? 0),
-    mouse_distance_mm: acc.mouse_distance_mm + (day.mouse_distance_mm ?? 0),
-    mouse_scroll_mm: acc.mouse_scroll_mm + (day.mouse_scroll_mm ?? 0),
-    chars_written: acc.chars_written + (day.chars_written ?? 0),
-    active_minutes: acc.active_minutes + (day.active_minutes ?? 0),
-    coding_minutes: acc.coding_minutes + (day.coding_minutes ?? 0),
-  }),
-  {
-    keystrokes: 0,
-    keybinds: 0,
-    mouse_clicks: 0,
-    mouse_distance_mm: 0,
-    mouse_scroll_mm: 0,
-    chars_written: 0,
-    active_minutes: 0,
-    coding_minutes: 0,
-  }
+    (acc, day) => ({
+        keystrokes: acc.keystrokes + (day.keystrokes ?? 0),
+        keybinds: acc.keybinds + (day.keybinds ?? 0),
+        mouse_clicks: acc.mouse_clicks + (day.mouse_clicks ?? 0),
+        mouse_distance_mm: acc.mouse_distance_mm + (day.mouse_distance_mm ?? 0),
+        mouse_scroll_mm: acc.mouse_scroll_mm + (day.mouse_scroll_mm ?? 0),
+        chars_written: acc.chars_written + (day.chars_written ?? 0),
+        active_minutes: acc.active_minutes + (day.active_minutes ?? 0),
+        coding_minutes: acc.coding_minutes + (day.coding_minutes ?? 0),
+    }),
+    {
+        keystrokes: 0,
+        keybinds: 0,
+        mouse_clicks: 0,
+        mouse_distance_mm: 0,
+        mouse_scroll_mm: 0,
+        chars_written: 0,
+        active_minutes: 0,
+        coding_minutes: 0,
+    },
 );
 ---
 
 <Layout>
     <div class="px-2 lg:px-0">
-        <nav
-            class="max-w-4xl bg-surface-variant w-full md:mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded"
-        >
+        <nav class="max-w-4xl bg-surface-variant w-full md:mx-auto px-4 py-1 mt-2 flex justify-between items-center rounded">
             <h3 class="text-2xl text-primary font-medium">APS</h3>
             <ul class="flex gap-4">
                 <a
                     class="text-on-surface-variant underline"
-                    href="https://github.com/APS6"><li>github</li></a
+                    href="https://github.com/APS6"
                 >
-                <a class="text-on-surface-variant underline" href="#stats"><li>stats</li></a>
+                    <li>github</li>
+                </a>
+                <a class="text-on-surface-variant underline" href="#stats">
+                    <li>stats</li>
+                </a>
             </ul>
         </nav>
     </div>
     <main class="max-w-4xl px-2 mx-auto">
-        <header
-            class="py-12 flex flex-col md:flex-row gap-8 justify-between items-center"
-        >
+        <header class="py-12 flex flex-col md:flex-row gap-8 justify-between items-center">
             <div class="flex flex-col gap-2">
                 <h1 class="text-6xl text-primary font-bold">Anirudha</h1>
                 <ul class="flex gap-4">
                     <li class="flex items-center gap-2">
-                        {is_online ? <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
-                        <span class="text-secondary">online</span> : <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
-                        <span class="text-secondary">offline</span>}
-
+                        {is_online ? (
+                            <>
+                                <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                                <span class="text-secondary">online</span>
+                            </>
+                        ) : (
+                            <>
+                                <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                                <span class="text-secondary">offline</span>
+                            </>
+                        )}
                     </li>
                     <li class="flex items-center gap-2">
-                        {is_coding ? <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
-                        <span class="text-secondary">coding</span> : <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
-                        <span class="text-secondary">not coding</span>}
-
+                        {is_coding ? (
+                            <>
+                                <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                                <span class="text-secondary">coding</span>
+                            </>
+                        ) : (
+                            <>
+                                <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                                <span class="text-secondary">not coding</span>
+                            </>
+                        )}
                     </li>
                 </ul>
                 <p>I just wanna build shi</p>
@@ -142,27 +160,33 @@ const totals = days.reduce(
                     <a
                         class="text-xl text-secondary underline"
                         href="https://github.com/APS6/libertas-live"
-                        ><h3>libertas live</h3></a
                     >
+                        <h3>libertas live</h3>
+                    </a>
                     <p class="mt-1">
-                        replace cricket ads on jiostar with a clean, real-time scorecard
+                        replace cricket ads on jiostar with a clean, real-time
+                        scorecard
                     </p>
                 </div>
                 <div>
                     <a
                         class="text-xl text-secondary underline"
-                        href="https://github.com/APS6/omazed"><h3>omazed</h3></a
+                        href="https://github.com/APS6/omazed"
                     >
+                        <h3>omazed</h3>
+                    </a>
                     <p class="mt-1">
-                        automatic theme switching and generation for zed in omarchy
+                        automatic theme switching and generation for zed in
+                        omarchy
                     </p>
                 </div>
                 <div>
                     <a
                         class="text-xl text-secondary underline"
                         href="https://study.anirudhasah.com"
-                        ><h3>studybuddy</h3></a
                     >
+                        <h3>studybuddy</h3>
+                    </a>
                     <p class="mt-1">
                         an ai-powered platform to empower students with
                         personalized tests and tutoring
@@ -172,8 +196,9 @@ const totals = days.reduce(
                     <a
                         class="text-xl text-secondary underline"
                         href="https://login.anirudhasah.com"
-                        ><h3>how did i login</h3></a
                     >
+                        <h3>how did i login</h3>
+                    </a>
                     <p class="mt-1">
                         browser extension that remembers and marks last used
                         login methods and google account
@@ -182,17 +207,18 @@ const totals = days.reduce(
                 <div>
                     <a
                         class="text-xl text-secondary underline"
-                        href="https://gicpatlot.in"><h3>gicpatlot.in</h3></a
+                        href="https://gicpatlot.in"
                     >
+                        <h3>gicpatlot.in</h3>
+                    </a>
                     <p class="mt-1">
-                        Wwbsite for a government school in India with a full
-                        cms
+                        Wwbsite for a government school in India with a full cms
                     </p>
                 </div>
                 <div>
-                    <a class="text-xl text-secondary underline" href="/"
-                        ><h3>project b6</h3></a
-                    >
+                    <a class="text-xl text-secondary underline" href="/">
+                        <h3>project b6</h3>
+                    </a>
                     <p class="mt-1">coming soon (trust me bro)</p>
                 </div>
             </div>
@@ -208,15 +234,37 @@ const totals = days.reduce(
         <div class="my-8">
             <h2 class="text-primary font-semibold text-xl">contact</h2>
             <ul class="flex flex-wrap items-center gap-4 mt-2 text-lg text-secondary">
+                <a class="underline" href="https://github.com/APS6">
+                    <li>github</li>
+                </a>
+                <a class="underline" href="https://x.com/anirudhasah">
+                    <li>twitter</li>
+                </a>
                 <a
-                    class=" underline"
-                    href="https://github.com/APS6"><li>github</li></a
+                    class="underline"
+                    href="https://discord.com/users/752376627937411103"
                 >
-                <a class=" underline" href="https://x.com/anirudhasah"><li>twitter</li></a>
-                <a class=" underline" href="https://discord.com/users/752376627937411103"><li>discord</li></a>
-                <a class=" underline" href="https://www.instagram.com/anirudhapsah/"><li>instagram</li></a>
-                <a class=" underline" href="mailto:me@anirudhasah.com"><li>me@anirudhasah.com</li></a>
+                    <li>discord</li>
+                </a>
+                <a
+                    class="underline"
+                    href="https://www.instagram.com/anirudhapsah/"
+                >
+                    <li>instagram</li>
+                </a>
+                <a class="underline" href="mailto:me@anirudhasah.com">
+                    <li>me@anirudhasah.com</li>
+                </a>
             </ul>
         </div>
+        <footer class="mt-8 py-6 border-t border-outline text-xs text-on-surface-variant flex flex-wrap justify-between items-center gap-2">
+            <span>© {new Date().getFullYear()} Anirudha Pratap Sah</span>
+            <a
+                href="https://divanism.anirudhasah.com"
+                class="hover:text-secondary underline"
+            >
+                divanism
+            </a>
+        </footer>
     </main>
 </Layout>
