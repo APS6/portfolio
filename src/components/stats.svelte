@@ -18,6 +18,7 @@
     import { fly } from "svelte/transition";
     import { actions } from "astro:actions";
 
+    export let available = true;
     export let totals;
     export let days;
     export let codingByLanguage;
@@ -49,20 +50,24 @@
             const { data, error } = await actions.fetchHours(
                 selectedDuration.value,
             );
-            if (!error && data) {
-                totals = data.totals;
-                hours = data.hours;
-                codingByLanguage = data.codingByLanguage;
+            if (error || !data || !data.available) {
+                available = false;
+                return;
             }
+            totals = data.totals;
+            hours = data.hours;
+            codingByLanguage = data.codingByLanguage;
         } else {
             const { data, error } = await actions.fetchDays(
                 selectedDuration.value,
             );
-            if (!error && data) {
-                totals = data.totals;
-                days = data.days;
-                codingByLanguage = data.codingByLanguage;
+            if (error || !data || !data.available) {
+                available = false;
+                return;
             }
+            totals = data.totals;
+            days = data.days;
+            codingByLanguage = data.codingByLanguage;
         }
     };
 
@@ -461,57 +466,67 @@
 </script>
 
 <div id="stats" class="mt-16">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center gap-4">
         <h2 class="text-primary font-semibold text-xl">stats</h2>
-        <div class="relative">
-            <button
-                type="button"
-                class="group bg-tertiary text-on-tertiary pl-4 pr-2 py-1 rounded-full flex items-center gap-1 cursor-pointer"
-                aria-haspopup="true"
-                aria-expanded={durationMenuOpen}
-                on:click={toggleDurationMenu}
-            >
-                <span class="font-medium">{selectedDuration.label}</span>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="28"
-                    height="28"
-                    viewBox="0 0 24 24"
-                    class="transition-transform group-hover:translate-y-0.5"
-                    class:rotate-180={durationMenuOpen}
+        {#if available}
+            <div class="relative">
+                <button
+                    type="button"
+                    class="group bg-tertiary text-on-tertiary pl-4 pr-2 py-1 rounded-full flex items-center gap-1 cursor-pointer"
+                    aria-haspopup="true"
+                    aria-expanded={durationMenuOpen}
+                    on:click={toggleDurationMenu}
                 >
-                    <path
-                        fill="currentColor"
-                        d="m12 15l-4.243-4.242l1.415-1.414L12 12.172l2.828-2.828l1.415 1.414z"
-                    />
-                </svg>
-            </button>
-            {#if durationMenuOpen}
-                <div
-                    class="absolute right-0 z-50 mt-2 w-40 rounded-xl bg-surface text-on-surface border border-outline shadow-xl backdrop-blur-sm overflow-hidden"
-                    transition:fly={{ y: -6, duration: 160 }}
-                >
-                    {#each durationOptions as option}
-                        <button
-                            class={`w-full text-left px-4 py-2 hover:bg-surface-variant/60 transition cursor-pointer ${
-                                selectedDuration.value === option.value
-                                    ? "bg-surface-variant/60"
-                                    : ""
-                            }`}
-                            on:click={() => selectDuration(option)}
-                        >
-                            {option.label}
-                            <span class="text-xs text-secondary"
-                                >{option.value >= 7
-                                    ? "UTC"
-                                    : "IST (UTC+5:30)"}</span
+                    <span class="font-medium">{selectedDuration.label}</span>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                        class="transition-transform group-hover:translate-y-0.5"
+                        class:rotate-180={durationMenuOpen}
+                    >
+                        <path
+                            fill="currentColor"
+                            d="m12 15l-4.243-4.242l1.415-1.414L12 12.172l2.828-2.828l1.415 1.414z"
+                        />
+                    </svg>
+                </button>
+                {#if durationMenuOpen}
+                    <div
+                        class="absolute right-0 z-50 mt-2 w-40 rounded-xl bg-surface text-on-surface border border-outline shadow-xl backdrop-blur-sm overflow-hidden"
+                        transition:fly={{ y: -6, duration: 160 }}
+                    >
+                        {#each durationOptions as option}
+                            <button
+                                class={`w-full text-left px-4 py-2 hover:bg-surface-variant/60 transition cursor-pointer ${
+                                    selectedDuration.value === option.value
+                                        ? "bg-surface-variant/60"
+                                        : ""
+                                }`}
+                                on:click={() => selectDuration(option)}
                             >
-                        </button>
-                    {/each}
-                </div>
-            {/if}
-        </div>
+                                {option.label}
+                                <span class="text-xs text-secondary"
+                                    >{option.value >= 7
+                                        ? "UTC"
+                                        : "IST (UTC+5:30)"}</span
+                                >
+                            </button>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
+        {:else}
+            <span
+                class="inline-flex items-center gap-2 rounded-full bg-surface-variant border border-outline px-3.5 py-1 text-xs text-on-surface-variant"
+            >
+                <span class="h-1.5 w-1.5 rounded-full bg-error"></span>
+                <span>offline</span>
+            </span>
+        {/if}
     </div>
+    {#if available}
     <div class="flex flex-wrap gap-2 mt-3">
         <div
             class="flex flex-col items-center flex-1 px-2 py-1.5 bg-surface-variant border-2 border-tertiary text-secondary rounded-md"
@@ -1025,6 +1040,119 @@
             </div>
         </div>
     </div>
+    {:else}
+        <div
+            class="relative mt-4 overflow-hidden rounded-lg border-2 border-outline bg-surface-variant px-6 py-12 md:px-10 md:py-14"
+        >
+            <svg
+                aria-hidden="true"
+                viewBox="0 0 800 180"
+                preserveAspectRatio="none"
+                class="pointer-events-none absolute inset-0 h-full w-full opacity-35"
+            >
+                <defs>
+                    <linearGradient
+                        id="stats-unavailable-fill"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                    >
+                        <stop offset="0%" stop-color="#9ccfd8" stop-opacity="0.18" />
+                        <stop offset="100%" stop-color="#9ccfd8" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
+                <line
+                    x1="0"
+                    y1="45"
+                    x2="800"
+                    y2="45"
+                    stroke="#403d52"
+                    stroke-dasharray="4 6"
+                    stroke-width="1"
+                />
+                <line
+                    x1="0"
+                    y1="90"
+                    x2="800"
+                    y2="90"
+                    stroke="#403d52"
+                    stroke-dasharray="4 6"
+                    stroke-width="1"
+                />
+                <line
+                    x1="0"
+                    y1="135"
+                    x2="800"
+                    y2="135"
+                    stroke="#403d52"
+                    stroke-dasharray="4 6"
+                    stroke-width="1"
+                />
+                <path
+                    d="M0 142 C 90 142, 130 118, 210 124 C 290 130, 340 150, 420 138 C 500 126, 560 112, 640 122 C 710 130, 755 138, 800 138 L 800 180 L 0 180 Z"
+                    fill="url(#stats-unavailable-fill)"
+                />
+                <path
+                    d="M0 142 C 90 142, 130 118, 210 124 C 290 130, 340 150, 420 138 C 500 126, 560 112, 640 122 C 710 130, 755 138, 800 138"
+                    fill="none"
+                    stroke="#31748f"
+                    stroke-width="1.75"
+                    stroke-dasharray="6 6"
+                />
+            </svg>
+
+            <div class="relative z-10 flex flex-col items-center text-center gap-3">
+                <div
+                    class="flex h-11 w-11 items-center justify-center rounded-full border border-outline bg-surface text-primary shadow-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="19"
+                        height="19"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M6 18v-5" />
+                        <path d="M12 18V8" />
+                        <path d="M18 18v-8" />
+                    </svg>
+                </div>
+                <div class="space-y-1.5">
+                    <p class="text-base sm:text-lg font-medium text-on-surface">
+                        stats are not available right now
+                    </p>
+                    <p
+                        class="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed"
+                    >
+                        activity graphs, language breakdowns, and commit heatmaps
+                        will be back later.
+                    </p>
+                </div>
+                <div
+                    class="mt-2 flex flex-wrap justify-center gap-2 text-[11px] text-on-surface-variant"
+                >
+                    <span
+                        class="rounded-full border border-outline bg-surface/75 px-3 py-0.5"
+                        >activity</span
+                    >
+                    <span
+                        class="rounded-full border border-outline bg-surface/75 px-3 py-0.5"
+                        >languages</span
+                    >
+                    <span
+                        class="rounded-full border border-outline bg-surface/75 px-3 py-0.5"
+                        >commits</span
+                    >
+                </div>
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>

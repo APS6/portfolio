@@ -10,93 +10,103 @@ import {
     coding_by_language,
     gte,
 } from "astro:db";
-
-const statusPromise = db.select().from(current_status).limit(1);
+import { EMPTY_TOTALS, safeDbQuery, sumTotals } from "../lib/db";
 
 const now = Math.floor(Date.now() / 1000);
 
 const two_month_ago = now - 60 * 24 * 60 * 60;
 const three_months_ago = now - 90 * 24 * 60 * 60;
 
-const daysPromise = db
-    .select({
-        timestamp: stats_day.timestamp,
-        keystrokes: stats_day.keystrokes,
-        keybinds: stats_day.keybinds,
-        mouse_clicks: stats_day.mouse_clicks,
-        mouse_distance_mm: stats_day.mouse_distance_mm,
-        mouse_scroll_mm: stats_day.mouse_scroll_mm,
-        chars_written: stats_day.chars_written,
-        active_minutes: stats_day.active_minutes,
-        coding_minutes: stats_day.coding_minutes,
-    })
-    .from(stats_day)
-    .where(gte(stats_day.timestamp, two_month_ago))
-    .orderBy((table) => table.timestamp);
+const [
+    statusRes,
+    daysRes,
+    codingByLanguageRes,
+    heatmapDaysRes,
+    heatmapCodingByLanguageRes,
+] = await Promise.all([
+    safeDbQuery(
+        () => db.select().from(current_status).limit(1),
+        "index.current_status",
+    ),
+    safeDbQuery(
+        () =>
+            db
+                .select({
+                    timestamp: stats_day.timestamp,
+                    keystrokes: stats_day.keystrokes,
+                    keybinds: stats_day.keybinds,
+                    mouse_clicks: stats_day.mouse_clicks,
+                    mouse_distance_mm: stats_day.mouse_distance_mm,
+                    mouse_scroll_mm: stats_day.mouse_scroll_mm,
+                    chars_written: stats_day.chars_written,
+                    active_minutes: stats_day.active_minutes,
+                    coding_minutes: stats_day.coding_minutes,
+                })
+                .from(stats_day)
+                .where(gte(stats_day.timestamp, two_month_ago))
+                .orderBy((table) => table.timestamp),
+        "index.stats_day",
+    ),
+    safeDbQuery(
+        () =>
+            db
+                .select({
+                    date: coding_by_language.date,
+                    language: coding_by_language.language,
+                    seconds: coding_by_language.seconds,
+                    chars_written: coding_by_language.chars_written,
+                })
+                .from(coding_by_language)
+                .where(gte(coding_by_language.date, two_month_ago))
+                .orderBy((table) => table.date),
+        "index.coding_by_language",
+    ),
+    safeDbQuery(
+        () =>
+            db
+                .select({
+                    timestamp: stats_day.timestamp,
+                    git_commits: stats_day.git_commits,
+                })
+                .from(stats_day)
+                .where(gte(stats_day.timestamp, three_months_ago))
+                .orderBy((table) => table.timestamp),
+        "index.heatmap_days",
+    ),
+    safeDbQuery(
+        () =>
+            db
+                .select({
+                    date: coding_by_language.date,
+                    seconds: coding_by_language.seconds,
+                })
+                .from(coding_by_language)
+                .where(gte(coding_by_language.date, three_months_ago))
+                .orderBy((table) => table.date),
+        "index.heatmap_coding_by_language",
+    ),
+]);
 
-const codingByLanguagePromise = db
-    .select({
-        date: coding_by_language.date,
-        language: coding_by_language.language,
-        seconds: coding_by_language.seconds,
-        chars_written: coding_by_language.chars_written,
-    })
-    .from(coding_by_language)
-    .where(gte(coding_by_language.date, two_month_ago))
-    .orderBy((table) => table.date);
+const statusAvailable = statusRes.ok;
+const status = statusRes.ok ? statusRes.data[0] : undefined;
 
-const heatmapDaysPromise = db
-    .select({
-        timestamp: stats_day.timestamp,
-        git_commits: stats_day.git_commits,
-    })
-    .from(stats_day)
-    .where(gte(stats_day.timestamp, three_months_ago))
-    .orderBy((table) => table.timestamp);
+const statsAvailable =
+    daysRes.ok &&
+    codingByLanguageRes.ok &&
+    heatmapDaysRes.ok &&
+    heatmapCodingByLanguageRes.ok;
 
-const heatmapCodingByLanguagePromise = db
-    .select({
-        date: coding_by_language.date,
-        seconds: coding_by_language.seconds,
-    })
-    .from(coding_by_language)
-    .where(gte(coding_by_language.date, three_months_ago))
-    .orderBy((table) => table.date);
-
-const [[status], days, codingByLanguage, heatmapDays, heatmapCodingByLanguage] =
-    await Promise.all([
-        statusPromise,
-        daysPromise,
-        codingByLanguagePromise,
-        heatmapDaysPromise,
-        heatmapCodingByLanguagePromise,
-    ]);
+const days = statsAvailable ? daysRes.data : [];
+const codingByLanguage = statsAvailable ? codingByLanguageRes.data : [];
+const heatmapDays = statsAvailable ? heatmapDaysRes.data : [];
+const heatmapCodingByLanguage = statsAvailable
+    ? heatmapCodingByLanguageRes.data
+    : [];
 
 const is_online = !!status && now - status.last_activity_at <= 300;
 const is_coding = !!status && now - status.last_coding_at <= 300;
 
-const totals = days.reduce(
-    (acc, day) => ({
-        keystrokes: acc.keystrokes + (day.keystrokes ?? 0),
-        keybinds: acc.keybinds + (day.keybinds ?? 0),
-        mouse_clicks: acc.mouse_clicks + (day.mouse_clicks ?? 0),
-        mouse_distance_mm: acc.mouse_distance_mm + (day.mouse_distance_mm ?? 0),
-        mouse_scroll_mm: acc.mouse_scroll_mm + (day.mouse_scroll_mm ?? 0),
-        chars_written: acc.chars_written + (day.chars_written ?? 0),
-        active_minutes: acc.active_minutes + (day.active_minutes ?? 0),
-        coding_minutes: acc.coding_minutes + (day.coding_minutes ?? 0),
-    }),
-    {
-        keystrokes: 0,
-        keybinds: 0,
-        mouse_clicks: 0,
-        mouse_distance_mm: 0,
-        mouse_scroll_mm: 0,
-        chars_written: 0,
-        active_minutes: 0,
-        coding_minutes: 0,
-    },
-);
+const totals = statsAvailable ? sumTotals(days) : { ...EMPTY_TOTALS };
 ---
 
 <Layout>
@@ -121,32 +131,41 @@ const totals = days.reduce(
             <div class="flex flex-col gap-2">
                 <h1 class="text-6xl text-primary font-bold">Anirudha</h1>
                 <ul class="flex gap-4">
-                    <li class="flex items-center gap-2">
-                        {is_online ? (
-                            <>
-                                <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
-                                <span class="text-secondary">online</span>
-                            </>
-                        ) : (
-                            <>
-                                <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
-                                <span class="text-secondary">offline</span>
-                            </>
-                        )}
-                    </li>
-                    <li class="flex items-center gap-2">
-                        {is_coding ? (
-                            <>
-                                <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
-                                <span class="text-secondary">coding</span>
-                            </>
-                        ) : (
-                            <>
-                                <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
-                                <span class="text-secondary">not coding</span>
-                            </>
-                        )}
-                    </li>
+                    {statusAvailable ? (
+                        <>
+                            <li class="flex items-center gap-2">
+                                {is_online ? (
+                                    <>
+                                        <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                                        <span class="text-secondary">online</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                                        <span class="text-secondary">offline</span>
+                                    </>
+                                )}
+                            </li>
+                            <li class="flex items-center gap-2">
+                                {is_coding ? (
+                                    <>
+                                        <div class="h-1.25 w-1.25 rounded-full bg-[#89d36a]"></div>
+                                        <span class="text-secondary">coding</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div class="h-1.25 w-1.25 rounded-full bg-error"></div>
+                                        <span class="text-secondary">not coding</span>
+                                    </>
+                                )}
+                            </li>
+                        </>
+                    ) : (
+                        <li class="flex items-center gap-2">
+                            <div class="h-1.25 w-1.25 rounded-full bg-on-surface-variant"></div>
+                            <span class="text-on-surface-variant">status unavailable</span>
+                        </li>
+                    )}
                 </ul>
                 <p>I just wanna build shi</p>
             </div>
@@ -225,6 +244,7 @@ const totals = days.reduce(
         </div>
         <Stats
             client:visible
+            available={statsAvailable}
             totals={totals}
             days={days}
             codingByLanguage={codingByLanguage}
